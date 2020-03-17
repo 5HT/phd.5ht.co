@@ -109,8 +109,7 @@ as Logical Framework for the Pi type:</p><code>PTS (A: U): U
     * (lambda: (B: A -> U) -> pi A B -> intro B)
     * (app:    (B: A -> U) -> intro B -> pi A B)
     * ((B: A -> U) (f: pi A B) -> (a: A)
-   -> Path (B a) ((app B (lambda B f)) a) (f a))
-</code><h1 id="impl">Implementation</h1><h2 id="ast">Syntax</h2><p>The terms of PTS<sup>&infin;</sup> consist of <b>nat</b> indexed stars, variables, applications,
+   -> Path (B a) ((app B (lambda B f)) a) (f a))</code><br><h1 id="impl">Implementation</h1><h2 id="ast">Syntax</h2><p>The terms of PTS<sup>&infin;</sup> consist of <b>nat</b> indexed stars, variables, applications,
 abstractions, and universal quantifications. This language is called Calculus
 of Construction and exists in various syntaxes. PTS<sup>&infin;</sup> supports <b>Morte's</b> syntax.</p><code><>  = #option
 I   = #identifier
