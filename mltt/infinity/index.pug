@@ -63,7 +63,7 @@ block content
 
                 h2 Cubical Syntax
                 p.
-                    The 10 lines BNF declares syntax that covers:
+                    The 10 BNF definitions declare syntax that covers:
                     1) MLTT as pi, sigma and path types;
                     2) inductive types case analysis; and
                     3) simple module system.
@@ -77,6 +77,12 @@ block content
                     imp := skip imp
                     imp := 'import' id imp
                 br.
+                p.
+                    The module system is present in all intermediate languages: <a href="https://phd.5ht.co/pts/pure/">PTS<sup>&infin;</sup></a>, MLTT<sup>&infin;</sup>, HTS<sup>&infin;</sup>.
+                    After extract programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
+                    (continuation passing style certified interpreter) that incorporates intercore protocol <a href="https://phd.5ht.co/lambda/runtime/">IP</a> between
+                    interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus,
+                    the IP could be seen us untyped desugared run-time target of process calculus.
                 p.
                     The sequence of variables, parsed as application fold.
                 code.

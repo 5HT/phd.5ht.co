@@ -16,7 +16,7 @@ given in the CoC paper <sup>3</sup>.</p><p><a href="https://raw.githubuserconten
 </p><p>Then Voevodsky presented HTS with strict Id and homotopical Path types,
 but without its computational semantics.
 This later was fixed by Mortberg et all in <b>cubicaltt</b> and Sterling et all in <b>redtt</b>.
-</p><h2>Cubical Syntax</h2><p>The 10 lines BNF declares syntax that covers:
+</p><h2>Cubical Syntax</h2><p>The 10 BNF definitions declare syntax that covers:
 1) MLTT as pi, sigma and path types;
 2) inductive types case analysis; and
 3) simple module system.
@@ -24,7 +24,11 @@ This system is enough to encode
 core <a href="https://groupoid.space/mltt/types">cubical base library</a>.</p><p>Module system.</p><code>mod := 'module' id 'where' imp dec
 imp := '$empty'
 imp := skip imp
-imp := 'import' id imp</code><br><p>The sequence of variables, parsed as application fold.</p><code>ids := '$empty'
+imp := 'import' id imp</code><br><p>The module system is present in all intermediate languages: <a href="https://phd.5ht.co/pts/pure/">PTS<sup>&infin;</sup></a>, MLTT<sup>&infin;</sup>, HTS<sup>&infin;</sup>.
+After extract programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
+(continuation passing style certified interpreter) that incorporates intercore protocol <a href="https://phd.5ht.co/lambda/runtime/">IP</a> between
+interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus,
+the IP could be seen us untyped desugared run-time target of process calculus.</p><p>The sequence of variables, parsed as application fold.</p><code>ids := '$empty'
 ids := id ids</code><br><p>Telescopes.</p><code>tele := '$empty'
 tele := cotele
 cotele := '(' exp ':' exp ')' tele</code><br><p>Top-level inductive data and function definitions.</p><code>codec := def skip dec
