@@ -178,26 +178,31 @@ block content
                         * ((B: A -> U) (f: pi A B) -> (a: A)
                        -> Path (B a) ((app B (lambda B f)) a) (f a))
 
+                h2#impl Implementation
                 h2#ast Syntax
                 p.
                     The terms of PTS<sup>&infin;</sup> consist of <b>nat</b> indexed stars, variables, applications,
                     abstractions, and universal quantifications. This language is called Calculus
                     of Construction and exists in various syntaxes. PTS<sup>&infin;</sup> supports <b>Morte's</b> syntax.
                 code.
-                    <> = #option
-                    I  = #identifier
-                    U  = * < #number >
-                    OM = U | I | ( OM )  | λ ( I : OM ) → OM
-                         OM OM | OM → OM | ∀ ( I : OM ) → OM
+                    <>  = #option
+                    I   = #identifier
+                    U   = * < #number >
+                    PTS = U | I | PTS → PTS | ∀ ( I : PTS ) → PTS
+                        | PTS PTS | ( PTS ) | λ ( I : PTS ) → PTS
                 p.
-                    Equivalent tree encoding for parsed terms is following:
+                    Equivalent HOAS tree encoding for parsed terms is following:
                 code.
-                    Inductive OM := Star: nat → OM
-                                  | Var: name → OM
-                                  | App: OM → OM → OM
-                                  | Lambda: name → OM → OM → OM
-                                  | Arrow: OM → OM → OM
-                                  | Pi: name → OM → OM → OM.
+                    data pts (lang: U)
+                       = star (n: nat)
+                       | var (x: name) (l: nat)
+                       | pi (x: name) (l: nat) (f: lang)
+                       | lambda  (x: name) (l: nat) (f: lang)
+                       | app (f a: lang)
+
+                    data PTS
+                       = ppure (_: pts PTS)
+                br.
 
                 h2 Universes
                 code.
