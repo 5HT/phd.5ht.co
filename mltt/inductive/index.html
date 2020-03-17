@@ -22,9 +22,9 @@
 Unlike Church-Boem-Berarducci encoding that can encode inductive types
 without fixpoint, recursion schemes require the fixpoint constructor
 in the typechecker core in order to express this encoding.
-We will use <mark>cubical</mark>
+We will use <n>cubicaltt</b>
 <a href="https://homotopytypetheory.org/2017/09/16/a-hands-on-introduction-to-cubicaltt/">type
-checker from Mortberg et all</a>. You may want
+checker</a> from Mörtberg et all. You may want
 to try this in Agda, Idris, Coq, or any other MLTT prover.
 </p><h2>Fixpoint</h2><p>The core fixpoint reflection type is parametrized by a functor
 and has only one contructor with the value of this functor applied to fixpoint itself.</p><code>data fix (F: U -> U) = Fix (point: F (fix F))</code><p>We also need functions for projecting and embedding values to/from
