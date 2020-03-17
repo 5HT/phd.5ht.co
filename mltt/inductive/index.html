@@ -18,7 +18,7 @@
                         tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']],
                                    processEscapes: true }
                     };
-</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">(Co)-Inductive Data Types</h1><h4 class="header__subtitle">Well-founded trees and corecursion<br/> in Martin-Löf Type Theory with fixpoint</h4></div></header><article class="main"><div class="om"><section><h1>Article</h1></section></div><aside>Denis Stoyanov<br>Maxim Sokhatsky<time>DATE: 19 OCT 2017</time></aside><div class="om"><section><h2>Abstract</h2><p>This work shows how to encode inductive types using recursion schemes.
+</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">(Co)-Inductive Data Types</h1><h4 class="header__subtitle">Well-founded trees and corecursion<br/> in Martin-Löf Type Theory with fixpoint</h4></div></header><article class="main"><div class="om"><section><h1>Abstract</h1></section></div><aside>Denis Stoyanov<br>Maxim Sokhatsky<time>DATE: 19 OCT 2017</time></aside><div class="om"><section><p>This work shows how to encode inductive types using recursion schemes.
 Unlike Church-Boem-Berarducci encoding that can encode inductive types
 without fixpoint, recursion schemes require the fixpoint constructor
 in the typechecker core in order to express this encoding.
@@ -26,7 +26,7 @@ We will use <n>cubicaltt</b>
 <a href="https://homotopytypetheory.org/2017/09/16/a-hands-on-introduction-to-cubicaltt/">type
 checker</a> from Mörtberg et all. You may want
 to try this in Agda, Idris, Coq, or any other MLTT prover.
-</p><h2>Fixpoint</h2><p>The core fixpoint reflection type is parametrized by a functor
+</p><h1>Prerequisites</h1><h2>Fixpoint</h2><p>The core fixpoint reflection type is parametrized by a functor
 and has only one contructor with the value of this functor applied to fixpoint itself.</p><code>data fix (F: U -> U) = Fix (point: F (fix F))</code><p>We also need functions for projecting and embedding values to/from
 fixpoint functiorial stream.</p><code>unfix (F: U -> U): fix F -> F (fix F) = split Fix f -> f
 embed (F: U -> U): F (fix F) -> fix F = \(x: F (fix F)) -> Fix x
@@ -104,7 +104,7 @@ data types and represents generic stream unfold.</p><code>ana (A: U) (F: U -> U)
 \(_ : A) -> F A) -> \(a : A) -> Fix (fmap A (fix F)
 F (ana A F coalg) (coalg a))) (A = nat, F = (\(A :
 U) -> stream)),tt)))
-</pre><h2>Hylomorphism</h2><p>Hylomorphism is a bi-functor that could be taken as axiom,
+</pre><h1>Recursion Schemes</h1><h2>Hylomorphism</h2><p>Hylomorphism is a bi-functor that could be taken as axiom,
 since all other recursion schemas are derivable from it.
 More common, (Co)-Inductive types could be represented
 as di-algebras.</p><code>hylo (A B: U) (F: U -> U)

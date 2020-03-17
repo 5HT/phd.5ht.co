@@ -2,7 +2,7 @@
 One is <b>MLTT<sup>&infin;</sup></b> is a minimal homotopy core that is needed to compute all the MLTT [rules].
 In its core it has only <b>comp</b> primitive (on empty homogeneous systems) and CCHM connections (for J computability).
 And the second is <b>HTS<sup>&infin;</sup></b>, that is a homotopy type system with full HoTT computability.
-The syntax and semantics of both are based on <b>cubicaltt</b> type checker.</p></aside><section><h2>1. Genesis of Type Systems</h2><div class="macro"><div class="macro__col"><h3 id="om">PTS</h3><ol><li><a href="#pi">PI</a></li></ol></div><div class="macro__col"><h3 id="macro">MLTT</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#id">ID</a></li><li><a href="#induction">INDUCTION</a></li></ol></div><div class="macro__col"><h3 id="eff">HTS</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#path">PATH</a></li><li><a href="#induction">INDUCTION</a></li><li><a href="#comp">COMP</a></li><li><a href="#glue">GLUE</a></li></ol></div></div><p>The history of Type Theory takes its root from MLTT paper <sup>1</sup>.
+The syntax and semantics of both are based on <b>cubicaltt</b> type checker.</p></aside><section><div class="macro"><div class="macro__col"><h3 id="om">PTS</h3><ol><li><a href="#pi">PI</a></li></ol></div><div class="macro__col"><h3 id="macro">MLTT</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#id">ID</a></li><li><a href="#induction">INDUCTION</a></li></ol></div><div class="macro__col"><h3 id="eff">HTS</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#path">PATH</a></li><li><a href="#induction">INDUCTION</a></li><li><a href="#comp">COMP</a></li><li><a href="#glue">GLUE</a></li></ol></div></div><p>The history of Type Theory takes its root from MLTT paper <sup>1</sup>.
 The the Type Theory was fixed for Predicative Universes with Id types,
 and W, Nat, List types were added <sup>2</sup>.
 The type checker of single axiom system with Pi types only is
@@ -14,7 +14,7 @@ given in the CoC paper <sup>3</sup>.</p><p><a href="https://raw.githubuserconten
 <a href="https://raw.githubusercontent.com/5HT/phd.5ht.co/master/mltt/infinity/references/06.Erik97.txt">[6]</a>. S. P. Jones and E. Meijer, “Henk: A typed intermediate language,” in In Proc. First Int’l Workshop on Types in Compilation, 1997.
 </p><p>Then Voevodsky presented HTS with strict Id and homotopical Path types, but without its computational semantics.
 This later was fixed by Mortberg et all in <b>cubicaltt</b> and Sterling et all in <b>redtt</b>.
-</p><h2>Cubical Syntax</h2><p>The 10 BNF definitions declare syntax that covers:
+</p></section><section><h1>Syntax</h1><h2>BNF</h2><p>The 10 BNF definitions declare syntax that covers:
 1) MLTT as pi, sigma and path types;
 2) inductive types case analysis; and
 3) simple module system.
@@ -72,9 +72,8 @@ formula := f2
 f1 := f1 meet f2
 f1 := f2
 f2 := '-' f2
-f2 := id</code><br><h2>Infinity Language</h2><p>The idea of Infinity Langauge is a unified layered type checker.
-We select 5 levels of type checker awareness from pure type
-systems up to homotopy calculus.</p><code>data lang
+f2 := id</code><br><h1>HOAS</h1><p>The idea of <b>MLTT<sup>&infin;</sup></b> is a unified layered type checker.
+We selected 5 levels of type checker awareness from pure type systems up to homotopy calculus HTS<sup>&infin;</sup>.</p><code>data lang
    = PTS (_: pts)
    | SIGMA (_: exists)
    | ID (_: identity)

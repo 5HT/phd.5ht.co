@@ -30,12 +30,11 @@ block content
     article.main
         .om
             section
-                h1 Article
+                h1 Abstract
         aside Denis Stoyanov<br>Maxim Sokhatsky
             time DATE: 19 OCT 2017
         .om
             section
-                h2 Abstract
                 p.
                     This work shows how to encode inductive types using recursion schemes.
                     Unlike Church-Boem-Berarducci encoding that can encode inductive types
@@ -46,6 +45,7 @@ block content
                     checker</a> from Mörtberg et all. You may want
                     to try this in Agda, Idris, Coq, or any other MLTT prover.
 
+                h1 Prerequisites
                 h2 Fixpoint
                 p.
                     The core fixpoint reflection type is parametrized by a functor
@@ -202,6 +202,7 @@ block content
                     F (ana A F coalg) (coalg a))) (A = nat, F = (\(A :
                     U) -> stream)),tt)))
 
+                h1 Recursion Schemes
                 h2 Hylomorphism
                 p.
                     Hylomorphism is a bi-functor that could be taken as axiom,
