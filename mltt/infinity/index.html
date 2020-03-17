@@ -11,29 +11,65 @@ given in the CoC paper <sup>3</sup>.</p><p><a href="https://raw.githubuserconten
 <a href="https://raw.githubusercontent.com/5HT/phd.5ht.co/master/mltt/infinity/references/04.Hofmann96.txt">[4]</a>. M. Hofmann and T. Streicher, “The groupoid interpretation of type theory,” in In Venice Festschrift, pp. 83–111, Oxford University Press, 1996.
 <a href="https://raw.githubusercontent.com/5HT/phd.5ht.co/master/mltt/infinity/references/05.Henk93.txt">[5]</a>. H. P. Barendregt, “Lambda calculi with types,” in Handbook of Logic in Computer Science (Vol. 2) (S. Abramsky, D. M. Gabbay, and S. E. Maibaum, eds.), (New York, NY, USA), pp. 117–309, Oxford University Press, Inc., 1992.
 <a href="https://raw.githubusercontent.com/5HT/phd.5ht.co/master/mltt/infinity/references/06.Erik97.txt">[6]</a>. S. P. Jones and E. Meijer, “Henk: A typed intermediate language,” in In Proc. First Int’l Workshop on Types in Compilation, 1997.
-</p><p>Then Voevodsky presented HTS with Univalence Axiom, but without its computational semantics.
-This later was fixed by Mortberg et all in cubicaltt and Harper et all in RedPRL.
+</p><p>Then Voevodsky presented HTS with strict Id and homotopical Path types,
+but without its computational semantics.
+This later was fixed by Mortberg et all in <b>cubicaltt</b> and Sterling et all in <b>redtt</b>.
 </p><h2>Cubical Syntax</h2><p>The 10 lines BNF declares syntax that covers:
 1) MLTT as pi, sigma and path types;
 2) inductive types case analysis; and
 3) simple module system.
 This system is enough to encode
-core <a href="https://groupoid.space/mltt/types">cubical base library</a>.</p><code>    0 := #empty
-  brs := 0 + cobrs
-  app := exp exp
-   id := [ #nat ]
-  ids := [ id ]
+core <a href="https://groupoid.space/mltt/types">cubical base library</a>.</p><p>Module system.</p><code>mod := 'module' id 'where' imp dec
+imp := '$empty'
+imp := skip imp
+imp := 'import' id imp</code><br><p>The sequence of variables, parsed as application fold.</p><code>ids := '$empty'
+ids := id ids</code><br><p>Telescopes.</p><code>tele := '$empty'
+tele := cotele
+cotele := '(' exp ':' exp ')' tele</code><br><p>Top-level inductive data and function definitions.</p><code>codec := def skip dec
 codec := def dec
-  dec := 0 + codec</code><br><code>   imp := [ import id ]
-  tele := 0 + cotele
-cotele := ( exp : exp ) tele
-   sum := 0 + id tele + id tele | sum
-    br := ids -> exp
-   mod := module id where imp def
- cobrs := | br brs</code><br><code>def := data id tele = sum + id tele : exp = exp + id tele : exp where def
-exp := cotele * exp + cotele -> exp + exp -> exp + app + ( exp ) + id +
-       split cobrs + exp.1 + exp.2 + \ cotele -> exp
-</code><h2>Infinity Language</h2><p>The idea of Infinity Langauge is a unified layered type checker.
+dec := '$empty'
+dec := codec
+def := 'data' id tele '=' sum
+def := id tele ':' exp '=' exp
+def := id tele ':' exp '=' exp 'where' def</code><br><p>Inductive and HIT introductions.</p><code>sum := '$empty'
+sum := rsum
+rsum := id tele
+rsum := id tele '|' rsum
+rsum := id tele '<' ids '>' sys
+rsum := id tele '<' ids '>' sys '|' rsum</code><br><p>Inductive and HIT eliminators.</p><code>cobrs := '|' br brs
+brs := '$empty'
+brs := cobrs
+br := ids arrow exp
+br := ids '@' ids arrow exp</code><br><p>Lambda and Path applications.</p><code>app := exp exp
+papp := exp '@' formula</code><br><p>Expressions.</p><code>exp := 'split' cobrs
+exp := id
+exp := id '{' exp '}'
+exp := '<' ids '>' exp
+exp := exp '.1'
+exp := exp '.2'
+exp := lam cotele arrow exp
+exp := cotele arrow exp
+exp := exp arrow exp
+exp := cotele '*' exp
+exp := 'comp' exp exp sys
+exp := 'fill' exp exp sys
+exp := 'glue' exp sys
+exp := 'unglue' exp sys
+exp := exp ',' exp
+exp := papp
+exp := '(' exp ')'
+exp := app</code><br><p>Cubical homogeneous composition system.</p><code>sys -> '[' sides ']'
+sides -> '$empty'
+sides -> side
+sides -> side ',' sides
+side -> '(' id '=' id ')' arrow exp
+formula -> formula forall f1
+formula -> f1
+formula -> f2
+f1 -> f1 meet f2
+f1 -> f2
+f2 -> '-' f2
+f2 -> id</code><br><h2>Infinity Language</h2><p>The idea of Infinity Langauge is a unified layered type checker.
 We select 5 levels of type checker awareness from pure type
 systems up to homotopy calculus.</p><code>data lang
    = PTS (_: pts)

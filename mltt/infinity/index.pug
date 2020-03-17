@@ -55,8 +55,9 @@ block content
                     <a href="https://raw.githubusercontent.com/5HT/phd.5ht.co/master/mltt/infinity/references/06.Erik97.txt">[6]</a>. S. P. Jones and E. Meijer, “Henk: A typed intermediate language,” in In Proc. First Int’l Workshop on Types in Compilation, 1997.
 
                 p.
-                    Then Voevodsky presented HTS with Univalence Axiom, but without its computational semantics.
-                    This later was fixed by Mortberg et all in cubicaltt and Harper et all in RedPRL.
+                    Then Voevodsky presented HTS with strict Id and homotopical Path types,
+                    but without its computational semantics.
+                    This later was fixed by Mortberg et all in <b>cubicaltt</b> and Sterling et all in <b>redtt</b>.
 
                 h2 Cubical Syntax
                 p.
@@ -66,28 +67,101 @@ block content
                     3) simple module system.
                     This system is enough to encode
                     core <a href="https://groupoid.space/mltt/types">cubical base library</a>.
+                p.
+                    Module system.
                 code.
-                         0 := #empty
-                       brs := 0 + cobrs
-                       app := exp exp
-                        id := [ #nat ]
-                       ids := [ id ]
-                     codec := def dec
-                       dec := 0 + codec
+                    mod := 'module' id 'where' imp dec
+                    imp := '$empty'
+                    imp := skip imp
+                    imp := 'import' id imp
                 br.
+                p.
+                    The sequence of variables, parsed as application fold.
                 code.
-                       imp := [ import id ]
-                      tele := 0 + cotele
-                    cotele := ( exp : exp ) tele
-                       sum := 0 + id tele + id tele | sum
-                        br := ids -> exp
-                       mod := module id where imp def
-                     cobrs := | br brs
+                    ids := '$empty'
+                    ids := id ids
                 br.
+                p.
+                    Telescopes.
                 code.
-                       def := data id tele = sum + id tele : exp = exp + id tele : exp where def
-                       exp := cotele * exp + cotele -> exp + exp -> exp + app + ( exp ) + id +
-                              split cobrs + exp.1 + exp.2 + \ cotele -> exp
+                    tele := '$empty'
+                    tele := cotele
+                    cotele := '(' exp ':' exp ')' tele
+                br.
+                p.
+                    Top-level inductive data and function definitions.
+                code.
+                    codec := def skip dec
+                    codec := def dec
+                    dec := '$empty'
+                    dec := codec
+                    def := 'data' id tele '=' sum
+                    def := id tele ':' exp '=' exp
+                    def := id tele ':' exp '=' exp 'where' def
+                br.
+                p.
+                    Inductive and HIT introductions.
+                code.
+                    sum := '$empty'
+                    sum := rsum
+                    rsum := id tele
+                    rsum := id tele '|' rsum
+                    rsum := id tele '<' ids '>' sys
+                    rsum := id tele '<' ids '>' sys '|' rsum
+                br.
+                p.
+                    Inductive and HIT eliminators.
+                code.
+                    cobrs := '|' br brs
+                    brs := '$empty'
+                    brs := cobrs
+                    br := ids arrow exp
+                    br := ids '@' ids arrow exp
+                br.
+                p.
+                    Lambda and Path applications.
+                code.
+                    app := exp exp
+                    papp := exp '@' formula
+                br.
+                p.
+                    Expressions.
+                code.
+                    exp := 'split' cobrs
+                    exp := id
+                    exp := id '{' exp '}'
+                    exp := '<' ids '>' exp
+                    exp := exp '.1'
+                    exp := exp '.2'
+                    exp := lam cotele arrow exp
+                    exp := cotele arrow exp
+                    exp := exp arrow exp
+                    exp := cotele '*' exp
+                    exp := 'comp' exp exp sys
+                    exp := 'fill' exp exp sys
+                    exp := 'glue' exp sys
+                    exp := 'unglue' exp sys
+                    exp := exp ',' exp
+                    exp := papp
+                    exp := '(' exp ')'
+                    exp := app
+                br.
+                p.
+                    Cubical homogeneous composition system.
+                code.
+                    sys -> '[' sides ']'
+                    sides -> '$empty'
+                    sides -> side
+                    sides -> side ',' sides
+                    side -> '(' id '=' id ')' arrow exp
+                    formula -> formula forall f1
+                    formula -> f1
+                    formula -> f2
+                    f1 -> f1 meet f2
+                    f1 -> f2
+                    f2 -> '-' f2
+                    f2 -> id
+                br.
 
                 h2 Infinity Language
                 p.
