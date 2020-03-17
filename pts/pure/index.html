@@ -78,10 +78,10 @@ $$</figure><figure>$$
 $$
 </figure></div><h2 id="ast">Single Axiom Language</h2><p>This language is called one axiom language (or pure) as eliminator
 and introduction adjoint functors inferred from type formation rule.
-The only computation rule of Pi type is called beta-reduction.</p><code>∀ (x: A) → B x : Type                  — formation rule
-λ (x: A) → b   : B x                   — introduction
-f a : B [a/x]                          — elimination
-(λ (x: A) → b) a = b [a/x] : B [a/x]   — equation
+The only computation rule of Pi type is called beta-reduction.</p><code>Pi (A: U) (B: A -> U): U = (x: A) -> B x
+lambda (A: U) (B: A -> U) (b: Pi A B): Pi A B = \ (x: A) -> b x
+app (A: U) (B: A -> U) (f: Pi A B) (a: A): B a = f a
+beta (A: U) (B: A -> U) (a:A) (f: Pi A B): Equ (B a) (app A B (lambda A B f) a) (f a) =
 </code><div class="semantics"><figure>\begin{equation}
 \tag{$\Pi$-formation}
 \dfrac
@@ -108,17 +108,12 @@ $$</figure><figure>$$
 \end{equation}
 $$
 </figure></div><p>This language could be embedded in itself and used
-as Logical Framework for the Pi type:</p><code>pi (A: U) (B: A -> U) : U = (x: A) -> B x
-
-Pi (A: U) : U
+as Logical Framework for the Pi type:</p><code>PTS (A: U): U
     = (intro:  (A -> U) -> U)
     * (lambda: (B: A -> U) -> pi A B -> intro B)
     * (app:    (B: A -> U) -> intro B -> pi A B)
-    * (applam: (B: A -> U) (f: pi A B) -> (a: A) ->
-      Path (B a) ((app B (lambda B f)) a) (f a))
-    * (lamapp: (B: A -> U) (p: intro B) ->
-      Path (intro B) (lambda B (\(a:A) -> app B p a)) p)
-    * Unit
+    * ((B: A -> U) (f: pi A B) -> (a: A)
+   -> Path (B a) ((app B (lambda B f)) a) (f a))
 </code><h2 id="ast">Syntax</h2><p>The terms of PTS<sup>&infin;</sup> consist of <b>nat</b> indexed stars, variables, applications,
 abstractions, and universal quantifications. This language is called Calculus
 of Construction and exists in various syntaxes. PTS<sup>&infin;</sup> supports <b>Morte's</b> syntax.</p><code><> = #option

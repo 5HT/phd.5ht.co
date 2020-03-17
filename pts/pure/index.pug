@@ -128,10 +128,10 @@ block content
                     and introduction adjoint functors inferred from type formation rule.
                     The only computation rule of Pi type is called beta-reduction.
                 code.
-                    ∀ (x: A) → B x : Type                  — formation rule
-                    λ (x: A) → b   : B x                   — introduction
-                    f a : B [a/x]                          — elimination
-                    (λ (x: A) → b) a = b [a/x] : B [a/x]   — equation
+                    Pi (A: U) (B: A -> U): U = (x: A) -> B x
+                    lambda (A: U) (B: A -> U) (b: Pi A B): Pi A B = \ (x: A) -> b x
+                    app (A: U) (B: A -> U) (f: Pi A B) (a: A): B a = f a
+                    beta (A: U) (B: A -> U) (a:A) (f: Pi A B): Equ (B a) (app A B (lambda A B f) a) (f a) =
 
                 .semantics
                     figure.
@@ -172,17 +172,12 @@ block content
                     This language could be embedded in itself and used
                     as Logical Framework for the Pi type:
                 code.
-                    pi (A: U) (B: A -> U) : U = (x: A) -> B x
-
-                    Pi (A: U) : U
+                    PTS (A: U): U
                         = (intro:  (A -> U) -> U)
                         * (lambda: (B: A -> U) -> pi A B -> intro B)
                         * (app:    (B: A -> U) -> intro B -> pi A B)
-                        * (applam: (B: A -> U) (f: pi A B) -> (a: A) ->
-                          Path (B a) ((app B (lambda B f)) a) (f a))
-                        * (lamapp: (B: A -> U) (p: intro B) ->
-                          Path (intro B) (lambda B (\(a:A) -> app B p a)) p)
-                        * Unit
+                        * ((B: A -> U) (f: pi A B) -> (a: A)
+                       -> Path (B a) ((app B (lambda B f)) a) (f a))
 
                 h2#ast Syntax
                 p.
