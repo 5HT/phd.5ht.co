@@ -30,8 +30,7 @@ your confidence in linear types.
         .map(|(l,r)| dyad_map_expr!(l,$op,r,$atom))
         .collect::<Vec<$atype>>();
     Ok( AST::Atom(Atom::Value(Value::$r_vec(a))) )
-},
-</code><code>objdump ./target/release/o -d | grep mulpd
+},</code><br><code>objdump ./target/release/o -d | grep mulpd
    223f1:       c5 f5 59 0c d3          vmulpd (%rbx,%rdx,8),%ymm1,%ymm1
    223f6:       c5 dd 59 64 d3 20       vmulpd 0x20(%rbx,%rdx,8),%ymm4,%ymm4
    22416:       c5 f5 59 4c d3 40       vmulpd 0x40(%rbx,%rdx,8),%ymm1,%ymm1

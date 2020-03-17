@@ -61,7 +61,7 @@ block content
                             .collect::<Vec<$atype>>();
                         Ok( AST::Atom(Atom::Value(Value::$r_vec(a))) )
                     },
-
+                br.
                 code.
                     objdump ./target/release/o -d | grep mulpd
                        223f1:       c5 f5 59 0c d3          vmulpd (%rbx,%rdx,8),%ymm1,%ymm1
