@@ -43,8 +43,6 @@ block content
                             li: a(href='#glue') GLUE
 
                 p.
-                    
-                p.
                     The history of Type Theory takes its root from MLTT paper <sup>1</sup>.
                     The the Type Theory was fixed for Predicative Universes with Id types,
                     and W, Nat, List types were added <sup>2</sup>.
@@ -80,10 +78,10 @@ block content
                 br.
                 p.
                     The module system is present in all intermediate languages: <a href="https://phd.5ht.co/pts/pure/">PTS<sup>&infin;</sup></a>, MLTT<sup>&infin;</sup>, HTS<sup>&infin;</sup>.
-                    After extract programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
+                    During compilation programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
                     (continuation passing style certified interpreter) that incorporates intercore protocol <a href="https://phd.5ht.co/lambda/runtime/">IP</a> between
-                    interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus,
-                    the IP could be seen us untyped desugared run-time target of process calculus.
+                    interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus or MLTT-based systems,
+                    the IP could be seen us untyped desugared run-time target of process calculus or linear type systems (LTS).
                 p.
                     The sequence of variables, parsed as application fold.
                 code.

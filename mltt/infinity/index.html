@@ -2,7 +2,7 @@
 One is  MLTT<sup>&infin;</sup> is a minimal homotopy core that is needed to compute all the MLTT [rules].
 In its core it has only <b>comp</b> primitive (on empty homogeneous systems) and CCHM connections (for J computability).
 And the second is HTS<sup>&infin;</sup>, that is a homotopy type system with full HoTT computability.
-The syntax and semantics of both are based on <b>cubicaltt</b> type checker.</p></aside><section><h2>1. Genesis of Type Systems</h2><div class="macro"><div class="macro__col"><h3 id="om">PTS</h3><ol><li><a href="#pi">PI</a></li></ol></div><div class="macro__col"><h3 id="macro">MLTT</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#id">ID</a></li><li><a href="#induction">INDUCTION</a></li></ol></div><div class="macro__col"><h3 id="eff">HTS</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#path">PATH</a></li><li><a href="#induction">INDUCTION</a></li><li><a href="#comp">COMP</a></li><li><a href="#glue">GLUE</a></li></ol></div></div><p></p><p>The history of Type Theory takes its root from MLTT paper <sup>1</sup>.
+The syntax and semantics of both are based on <b>cubicaltt</b> type checker.</p></aside><section><h2>1. Genesis of Type Systems</h2><div class="macro"><div class="macro__col"><h3 id="om">PTS</h3><ol><li><a href="#pi">PI</a></li></ol></div><div class="macro__col"><h3 id="macro">MLTT</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#id">ID</a></li><li><a href="#induction">INDUCTION</a></li></ol></div><div class="macro__col"><h3 id="eff">HTS</h3><ol><li><a href="#pi">PI</a></li><li><a href="#sigma">SIGMA</a></li><li><a href="#path">PATH</a></li><li><a href="#induction">INDUCTION</a></li><li><a href="#comp">COMP</a></li><li><a href="#glue">GLUE</a></li></ol></div></div><p>The history of Type Theory takes its root from MLTT paper <sup>1</sup>.
 The the Type Theory was fixed for Predicative Universes with Id types,
 and W, Nat, List types were added <sup>2</sup>.
 The type checker of single axiom system with Pi types only is
@@ -23,10 +23,10 @@ core <a href="https://groupoid.space/mltt/types">cubical base library</a>.</p><p
 imp := '$empty'
 imp := skip imp
 imp := 'import' id imp</code><br><p>The module system is present in all intermediate languages: <a href="https://phd.5ht.co/pts/pure/">PTS<sup>&infin;</sup></a>, MLTT<sup>&infin;</sup>, HTS<sup>&infin;</sup>.
-After extract programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
+During compilation programs in these languages are being desugared to untyped lambda interpreter called <a href="https://phd.5ht.co/lambda/intro/">CPS</a>
 (continuation passing style certified interpreter) that incorporates intercore protocol <a href="https://phd.5ht.co/lambda/runtime/">IP</a> between
-interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus,
-the IP could be seen us untyped desugared run-time target of process calculus.</p><p>The sequence of variables, parsed as application fold.</p><code>ids := '$empty'
+interpreter instances that are running at processor cores. While CPS could be seen as desugared run-time target of dependently typed lambda calculus or MLTT-based systems,
+the IP could be seen us untyped desugared run-time target of process calculus or linear type systems (LTS).</p><p>The sequence of variables, parsed as application fold.</p><code>ids := '$empty'
 ids := id ids</code><br><p>Telescopes.</p><code>tele := '$empty'
 tele := cotele
 cotele := '(' exp ':' exp ')' tele</code><br><p>Top-level inductive data and function definitions.</p><code>codec := def skip dec
