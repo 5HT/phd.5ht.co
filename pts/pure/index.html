@@ -19,9 +19,8 @@
                         tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']],
                                    processEscapes: true }
                     };
-</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">Pure Type System</h1><h4 class="header__subtitle">The minimal language with universal quntifier and infinity number of universes for consistent typechecking and normalization</h4></div></header><article class="main"><div class="om"><section><h1>Abstract</h1></section><aside>Maxim Sokhatsky<time>DATE: 10 OCT 2016</time></aside><section><p>The <b>PTS<sup>&infin;</sup></b> programming language is a higher-order dependently typed lambda calculus,
-an extension of Coquand's Calculus of Constructions
-with the predicative/impredicative hierarchy of indexed universes.</p></section><section><h2 id="nat">Universes</h2><p>The infinite hierarchy of universes allows to avoid paradoxes in type theory.</p><code>U₀ : U₁ : U₂ : U₃ : …
+</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">Pure Type System</h1><h4 class="header__subtitle">The minimal language with universal quantifier and infinity number of universes for consistent typechecking and normalization</h4></div></header><article class="main"><div class="om"><section><h1>Abstract</h1></section><aside>Maxim Sokhatsky<time>DATE: 10 OCT 2016</time></aside><section><p>The <b>PTS<sup>&infin;</sup></b> programming language is a higher-order dependently typed lambda calculus,
+an extension of Coquand's Calculus of Constructions with the predicative/impredicative hierarchy of indexed universes.</p></section><section><h2 id="nat">Universes</h2><p>The infinite hierarchy of universes allows to avoid paradoxes in type theory.</p><code>U₀ : U₁ : U₂ : U₃ : …
 
 U₀ — propositions
 U₁ — values and sets
@@ -178,7 +177,7 @@ type (:app,(F,A))            D -> let T = type(F,D),
                                   ((:forall,(N,0)),(I,O)) = T,
                                   Q = type A D,
                                   true = eq I Q in norm (sub O N A)
-</code></section><section><h1>Passes</h1><h2 id="normal">Normalized</h2><p>Terms in PTS<sup>&infin;</sup> language.</p><code>$ om show List/Cons
+</code></section><section><h1>USAGE</h1><h2 id="normal">Normalization (by Evaluation)</h2><p>Terms in PTS<sup>&infin;</sup> language.</p><code>$ om show List/Cons
 
 λ (A: *)
 → λ (Head: A)
@@ -197,20 +196,16 @@ type (:app,(F,A))            D -> let T = type(F,D),
 → List)
 → λ (Nil: List)
 → Cons Head (Tail List Cons Nil)
-</code><h2 id="syntax">Extract Language</h2><p>The untyped lambda language O is the simplest language used in
+</code><h2 id="erased">Type Erasure</h2><p>The untyped lambda language O is the simplest language used in
 PTS<sup>&infin;</sup> to generate backend programs. This O is used as the output of type erasure.</p><code>I = #identifier
-O = I | ( O ) | O O | λ I -> O</code><br><code>Inductive O := Var: nat → O
-             | App: O → O → O
-             | Lambda: nat → O → O → O
-</code><h2 id="erased">Erased</h2><p>Terms in untyped lambda pure language.</p><code>$ om print fst erase a "#List/Cons"
+O = I | ( O ) | O O | λ I -> O</code><br><code>Inductive O := Var: nat → O | App: O → O → O | Lambda: nat → O → O → O</code><p>Terms in untyped lambda pure language.</p><code>$ om print fst erase a "#List/Cons"
 ( λ Head
 → ( λ Tail
 → ( λ Cons
 → ( λ Nil
 → ((Cons Head) ((Tail Cons) Nil))))))
-ok</code><p>Erlang extracted code. For other targets you may want to read
-<a href='../../lc/extract'> Code Extract</a> notes.</p><code>'Cons'() -> fun (Head) -> fun (Tail) -> fun (Cons) -> fun (Nil) ->
-    ((Cons(Head))((Tail(Cons))(Nil))) end end end end.</code><p><center><table cellspacing=5><tr><td width=5><img src="https://n2o.space/img/pdf.jpg" width=35></td><td width=400>
+ok</code><h2 id="syntax">Extraction<Erlang>extracted code. For other targets you may want to read</Erlang><a href='../../lc/extract'> Code Extract</a> notes.</h2><code>'Cons'() -> fun (Head) -> fun (Tail) -> fun (Cons) -> fun (Nil) ->
+    ((Cons(Head))((Tail(Cons))(Nil))) end end end end.</code></section><section><h1>Bibliography</h1><p><center><table cellspacing=5><tr><td width=5><img src="https://n2o.space/img/pdf.jpg" width=35></td><td width=400>
 <a href="https://github.com/groupoid/groupoid.space/blob/master/tex/articles/pts/pts.pdf">
 <h3>Addendum I: Pure Type System for Erlang</h3>
 </a></td></tr></table></center></p></section></div></article><footer class="footer"><a href="//tonpa.guru/"><img class="footer__logo" src="https://longchenpa.guru/seal.png" width="50"></a><span class="footer__copy">2016&mdash;2020 &copy; <a href="//phd.5ht.co" style="color:Lavender;">Максим Сохацький</a></span></footer><script src="https://phd.5ht.co/bundle.js?v=5"></script><script src="https://groupoid.space/highlight.js?v=11"></script></body></html>

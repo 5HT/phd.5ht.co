@@ -27,7 +27,7 @@ block title
                          };
 
 block content
-    +header('../../groupoid.svg', 'Pure Type System', 'The minimal language with universal quntifier and infinity number of universes for consistent typechecking and normalization')
+    +header('../../groupoid.svg', 'Pure Type System', 'The minimal language with universal quantifier and infinity number of universes for consistent typechecking and normalization')
     article.main
         .om
             section
@@ -37,8 +37,7 @@ block content
             section
                 p.
                     The <b>PTS<sup>&infin;</sup></b> programming language is a higher-order dependently typed lambda calculus,
-                    an extension of Coquand's Calculus of Constructions
-                    with the predicative/impredicative hierarchy of indexed universes.
+                    an extension of Coquand's Calculus of Constructions with the predicative/impredicative hierarchy of indexed universes.
             section
                 h2#nat Universes
                 p.
@@ -280,9 +279,9 @@ block content
                                                       true = eq I Q in norm (sub O N A)
 
             section
-                h1 Passes
+                h1 USAGE
 
-                h2#normal Normalized
+                h2#normal Normalization (by Evaluation)
                 p Terms in PTS<sup>&infin;</sup> language.
                 code.
                     $ om show List/Cons
@@ -305,7 +304,7 @@ block content
                     → λ (Nil: List)
                     → Cons Head (Tail List Cons Nil)
 
-                h2#syntax Extract Language
+                h2#erased Type Erasure
                 p.
                     The untyped lambda language O is the simplest language used in
                     PTS<sup>&infin;</sup> to generate backend programs. This O is used as the output of type erasure.
@@ -314,11 +313,7 @@ block content
                     O = I | ( O ) | O O | λ I -> O
                 br.
                 code.
-                    Inductive O := Var: nat → O
-                                 | App: O → O → O
-                                 | Lambda: nat → O → O → O
-
-                h2#erased Erased
+                    Inductive O := Var: nat → O | App: O → O → O | Lambda: nat → O → O → O
                 p.
                     Terms in untyped lambda pure language.
                 code.
@@ -329,12 +324,14 @@ block content
                     → ( λ Nil
                     → ((Cons Head) ((Tail Cons) Nil))))))
                     ok
-                p.
+                h2#syntax Extraction
                     Erlang extracted code. For other targets you may want to read
                     <a href='../../lc/extract'> Code Extract</a> notes.
                 code.
                     'Cons'() -> fun (Head) -> fun (Tail) -> fun (Cons) -> fun (Nil) ->
                         ((Cons(Head))((Tail(Cons))(Nil))) end end end end.
+            section
+                h1 Bibliography
                 p.
                     <center><table cellspacing=5><tr><td width=5><img src="https://n2o.space/img/pdf.jpg" width=35></td><td width=400>
                     <a href="https://github.com/groupoid/groupoid.space/blob/master/tex/articles/pts/pts.pdf">
