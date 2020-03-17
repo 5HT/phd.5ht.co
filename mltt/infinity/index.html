@@ -59,18 +59,17 @@ exp := 'unglue' exp sys
 exp := exp ',' exp
 exp := papp
 exp := '(' exp ')'
-exp := app</code><br><p>Cubical homogeneous composition system.</p><code>sys -> '[' sides ']'
-sides -> '$empty'
-sides -> side
-sides -> side ',' sides
-side -> '(' id '=' id ')' arrow exp
-formula -> formula forall f1
-formula -> f1
-formula -> f2
-f1 -> f1 meet f2
-f1 -> f2
-f2 -> '-' f2
-f2 -> id</code><br><h2>Infinity Language</h2><p>The idea of Infinity Langauge is a unified layered type checker.
+exp := app</code><br><p>Cubical homogeneous composition system.</p><code>sys := '[' sides ']'
+sides := '$empty'
+sides := side
+sides := side ',' sides
+side := '(' id '=' id ')' arrow exp</code><br><p>CCHM connections (meet and join).</p><code>formula := formula forall f1
+formula := f1
+formula := f2
+f1 := f1 meet f2
+f1 := f2
+f2 := '-' f2
+f2 := id</code><br><h2>Infinity Language</h2><p>The idea of Infinity Langauge is a unified layered type checker.
 We select 5 levels of type checker awareness from pure type
 systems up to homotopy calculus.</p><code>data lang
    = PTS (_: pts)

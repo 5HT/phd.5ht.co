@@ -150,18 +150,22 @@ block content
                 p.
                     Cubical homogeneous composition system.
                 code.
-                    sys -> '[' sides ']'
-                    sides -> '$empty'
-                    sides -> side
-                    sides -> side ',' sides
-                    side -> '(' id '=' id ')' arrow exp
-                    formula -> formula forall f1
-                    formula -> f1
-                    formula -> f2
-                    f1 -> f1 meet f2
-                    f1 -> f2
-                    f2 -> '-' f2
-                    f2 -> id
+                    sys := '[' sides ']'
+                    sides := '$empty'
+                    sides := side
+                    sides := side ',' sides
+                    side := '(' id '=' id ')' arrow exp
+                br.
+                p.
+                    CCHM connections (meet and join).
+                code.
+                    formula := formula forall f1
+                    formula := f1
+                    formula := f2
+                    f1 := f1 meet f2
+                    f1 := f2
+                    f2 := '-' f2
+                    f2 := id
                 br.
 
                 h2 Infinity Language
