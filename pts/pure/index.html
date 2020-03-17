@@ -19,7 +19,7 @@
                         tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']],
                                    processEscapes: true }
                     };
-</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">Pure Type System</h1><h4 class="header__subtitle">The minimal language with universal quntifier and infinity number of universes for consistent typechecking and normalization</h4></div></header><article class="main"><div class="om"><section><h1>Article</h1></section><aside>Maxim Sokhatsky<time>DATE: 10 OCT 2016</time></aside><section><h2 id="nat">Universes</h2><p>The <b>OM</b> programming language is a higher-order dependently typed lambda calculus,
+</script></head><body class="content"><header class="header"><div class="header__titles"><h1 class="header__title">Pure Type System</h1><h4 class="header__subtitle">The minimal language with universal quntifier and infinity number of universes for consistent typechecking and normalization</h4></div></header><article class="main"><div class="om"><section><h1>Article</h1></section><aside>Maxim Sokhatsky<time>DATE: 10 OCT 2016</time></aside><section><h2 id="nat">Universes</h2><p>The <b>PTS<sup>&infin;</sup></b> programming language is a higher-order dependently typed lambda calculus,
 an extension of Coquand's Calculus of Constructions
 with the predicative/impredicative hierarchy of indexed universes.
 The motivation for this extension is to avoid paradoxes in dependent theory.
@@ -119,9 +119,9 @@ Pi (A: U) : U
     * (lamapp: (B: A -> U) (p: intro B) ->
       Path (intro B) (lambda B (\(a:A) -> app B p a)) p)
     * Unit
-</code><h2 id="ast">Syntax</h2><p>The terms of OM consist of <b>nat</b> indexed stars, variables, applications,
+</code><h2 id="ast">Syntax</h2><p>The terms of PTS<sup>&infin;</sup> consist of <b>nat</b> indexed stars, variables, applications,
 abstractions, and universal quantifications. This language is called Calculus
-of Construction and exists in various syntaxes. OM supports <b>Morte's</b> syntax.</p><code><> = #option
+of Construction and exists in various syntaxes. PTS<sup>&infin;</sup> supports <b>Morte's</b> syntax.</p><code><> = #option
 I  = #identifier
 U  = * < #number >
 OM = U | I | ( OM )  | λ ( I : OM ) → OM
@@ -186,7 +186,7 @@ type (:app,(F,A))            D -> let T = type(F,D),
                                   ((:forall,(N,0)),(I,O)) = T,
                                   Q = type A D,
                                   true = eq I Q in norm (sub O N A)
-</code></section><section><h1>Passes</h1><h2 id="normal">Normalized</h2><p>Terms in OM language.</p><code>$ om show List/Cons
+</code></section><section><h1>Passes</h1><h2 id="normal">Normalized</h2><p>Terms in PTS<sup>&infin;</sup> language.</p><code>$ om show List/Cons
 
 λ (A: *)
 → λ (Head: A)
@@ -206,7 +206,7 @@ type (:app,(F,A))            D -> let T = type(F,D),
 → λ (Nil: List)
 → Cons Head (Tail List Cons Nil)
 </code><h2 id="syntax">Extract Language</h2><p>The untyped lambda language O is the simplest language used in
-OM to generate backend programs. This O is used as the output of type erasure.</p><code>I = #identifier
+PTS<sup>&infin;</sup> to generate backend programs. This O is used as the output of type erasure.</p><code>I = #identifier
 O = I | ( O ) | O O | λ I -> O</code><br><code>Inductive O := Var: nat → O
              | App: O → O → O
              | Lambda: nat → O → O → O
