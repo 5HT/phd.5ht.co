@@ -97,7 +97,7 @@ beta (A: U) (B: A -> U) (a:A) (f: Pi A B): Equ (B a) (app A B (lambda A B f) a) 
 \end{equation}
 $$</figure><figure>$$
 \begin{equation}
-\tag{$\beta$}
+\tag{$\beta$-comp}
 \dfrac
 {x:A \vdash b: B\ \ \ a:A}
 {(\lambda\ (x:A) \rightarrow b)\ a = b\ [a/x] : B\ [a/x]}
