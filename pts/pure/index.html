@@ -90,14 +90,14 @@ beta (A: U) (B: A -> U) (a:A) (f: Pi A B): Equ (B a) (app A B (lambda A B f) a) 
 {\lambda\ (x:A) \rightarrow b : \Pi\ (x: A) \rightarrow B }
 \end{equation}</figure><br><figure>$$
 \begin{equation}
-\tag{$App$-elimination}
+\tag{$App$-elim}
 \dfrac
 {f: (\Pi\ (x:A) \rightarrow B)\ \ \ a: A}
 {f\ a : B\ [a/x]}
 \end{equation}
 $$</figure><figure>$$
 \begin{equation}
-\tag{$\beta$-computation}
+\tag{$\beta$}
 \dfrac
 {x:A \vdash b: B\ \ \ a:A}
 {(\lambda\ (x:A) \rightarrow b)\ a = b\ [a/x] : B\ [a/x]}
