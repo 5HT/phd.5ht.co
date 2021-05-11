@@ -1,1152 +1,966 @@
-\addtocontents{toc}{\protect\newpage}
-\chapter{Математичні компоненти}
+\chapter{Система вищих формальних мов}
+Четвертий розділ описує розвиток концептуальної моделі системи доведення теорем як сукупності:
+послідовності формальних мов програмування, кожна наступна з яких, складніша за попередню,
+має свою операційну семантику, та наслідує усі властивості попередніх мов послідовності.
 
-Четвертий розділ надає приклади математичного моделювання
-та складних теорем теорії категорій, теорій топосів, теорії гомотопій, тощо.
 
-\section{Теорія категорій}
+\section{Формальні мови програмування}
+Тут йдеться про мови програмування придатні для доведення теорем,
+та їх таксономію від найелементарніших (чистої системи з одним типом $\Pi$) до
+найпотужніших гомотопічних систем. Одна така гомотопічна система є кінцевим завданням
+цього розділу --- побудова моделі гомотопічного верифікатора.
+В процесі його побудови в цьому розділі ми розглянемо під
+мікроскопом складові частини його нижчих мовних рівнів.
 
-\subsection{Категорія}
+Застосуємо категорну семантику для мов програмування і будемо розглядати
+мови програмування як моноїдальні мовні категорі, об'єкти яких є просторами
+усіх програм цих мов програмування, а морфізми --- правила верифікації та компіляції цих мов.
+Морфізми між мовними категоріями в категорї мов програмування --- це
+функтори підвищення та пониження складності мови, подібно до того як діють
+морфізми в контекстуальних категоріях. Морфізм деконструює або конструює за
+допомогою Either-типу або $\Sigma$-типу індуктивний тип мови програмування.
 
-\begin{definition} (Category Signature).
-The signature of category is
-a $\Sigma_{A:U}A \rightarrow A \rightarrow U$ where $U$ could be any universe.
-The $pr_1$ projection is called $Ob$ and $pr_2$ projection is
-called $Hom(a,b)$, where $a,b:Ob$.
+Мови розкладаються у спектральну (індексовану натуральними числами $N \rightarrow U$)
+послідовність мов, кожен елемент якої є мовою програмування,
+яка не містить синтаксичне дерево вищої мови програмування.
+
+\subsection{Чиста система типів $O_{PTS}$}
+
+Чиста ситема або числення конструкцій або система з одим типом або
+система з однією аксіомою, продовжує традиції елементарних пруверів
+в стилі першого AUTOMATH та сучасних Henk, Morte, Cedile, Om.
+
+\begin{definition} (Мовна категорія чистої мови $O_{PTS}$).
+\begin{equation}
+O_{PTS} =
+\begin{cases}
+Ob: \{\ X: maybe\ PTS, target: maybe\ CPS \ \} \\
+Hom: \begin{cases}
+type,norm: X \rightarrow X, extract: X \rightarrow target \\
+certify: X \rightarrow target = type \circ norm \circ extract
+\end{cases}
+\end{cases}
+\end{equation}
+\end{definition}
+
+\begin{definition} (Синтаксис мовної категорії $O_{PTS}$).
+Чиста мова $O_{PTS}$ містить лише синтаксис одного типу, $\Pi$-типу.
+Така теорія називається теорією з одним типом, або з однією аксіомою.
 \begin{lstlisting}
-cat: U = (A: U) * (A -> A -> U)
+data PTS = ppure (_: pts PTS)
 \end{lstlisting}
 \end{definition}
 
-Precategory $C$ defined as set of $Hom_C(a,b)$ where $a,b:Ob_C$
-are objects defined by its $id$ arrows $Hom_C(x,x)$.
-Properfies of left and right units included with composition c
-and its associativity.
+Вона описана в літературі як Calculus of Construction (Кокан),
+Pure Type System (Стемп, Фу).
 
-\begin{definition} (Precategory).
-More formal, precategory $C$ consists of the following.
-(i) A type $Ob_C$, whose elements are called objects;
-(ii) for each $a,b: Ob_C$, a set $Hom_C(a,b)$, whose
-elements are called arrows or morphisms.
-(iii) For each $a: Ob_C$, a morphism $1_a : Hom_C(a,a)$,
-called the identity morphism.
-(iv) For each $a,b,c: Ob_C$, a function
-$Hom_C(b,c) \rightarrow Hom_C(a,b) \rightarrow Hom_C(a,c)$
-called composition, and denoted $g \circ f$.
-(v) For each $a,b: Ob_C$ and $f: Hom_C(a,b)$,
-$f = 1_b \circ f$ and $f = f \circ 1_a$.
-(vi) For each $a,b,c,d: A$ and
-$f: Hom_C(a,b)$, $g: Hom_C(b,c)$, $h: Hom_C(c,d)$,
-$h \circ (g \circ f ) = (h \circ g) \circ f$.
-\end{definition}
-
-\begin{definition} (Small Category).
-If for all $a,b: Ob$ the $Hom_C(a,b)$ forms a Set, then
-such category is called small category.
-\begin{lstlisting}
-isPrecategory (C: cat): U
-  = (id: (x: C.1) -> C.2 x x)
-  * (c: (x y z: C.1) -> C.2 x y -> C.2 y z -> C.2 x z)
-  * (homSet: (x y: C.1) -> isSet (C.2 x y))
-  * (left: (x y: C.1) -> (f: C.2 x y)
-  -> Path (C.2 x y) (c x x y (id x) f) f)
-  * (right: (x y: C.1) -> (f: C.2 x y)
-  -> Path (C.2 x y) (c x y y f (id y)) f)
-  * ( (x y z w: C.1) (f: C.2 x y) (g: C.2 y z)
-    (h: C.2 z w) -> Path (C.2 x w)
-    (c x z w (c x y z f g) h) (c x y w f (c y z w g h)))
-\end{lstlisting}
-precategory: U = (C: cat) * isPrecategory C
-\begin{lstlisting}
+\begin{definition} (Синтаксичне дерево $O_\Pi$).
+\begin{lstlisting}[mathescape=true]
+data pts (lang: U)
+   = star (n: nat)
+   | var (x: name) (l: nat)
+   | pi (x: name) (l: nat) (f: lang)
+   | lambda  (x: name) (l: nat) (f: lang)
+   | app (f a: lang)
 \end{lstlisting}
 \end{definition}
 
-Accessors of the precategory structure.
-For $Ob$ is carrier and for $Hom$ is hom.
+\subsection{Теорія типів Мартіна-Льофа $O_{MLTT}$}
 
-\begin{lstlisting}
-carrier (C: precategory): U = C.1.1
-hom     (C: precategory) (a b: carrier C): U = C.1.2 a b
-path    (C: precategory) (x: carrier C): hom C x x = C.2.1 x
-compose (C: precategory) (x y z: carrier C)
-        (f: hom C x y) (g: hom C y z): hom C x z = C.2.2.1 x y z f g
-\end{lstlisting}
+Мова теорії типів є сучасною основою всіх пруверів з залежними типами,
+такими, наприклад, як NuPRL та Agda. Багато так званих $\Pi\Sigma$ пруверів
+імплементують $MLTT$ серед таких як:
+$\Pi\Sigma$\footnote{\url{https://github.com/zlizta/pisigma-0-2-2}},
+$\Pi\forall$\footnote{\url{https://github.com/sweirich/pi-forall}}.
 
-\subsection{(Ко)термінал}
-\begin{definition} (Initial Object).
-Is such object $Ob_C$, that $\Pi_{x,y:Ob_C}$ $isContr(Hom_C(x,y))$.
+\begin{definition} (Мовна категорія $O_{MLTT}$).
+\begin{equation}
+O_{MLTT} =
+\begin{cases}
+Ob: \{\ maybe\ MLTT\ \} \\
+Hom: \begin{cases}
+type,norm: Ob \rightarrow Ob \\
+certify: Ob \rightarrow Ob = type \circ norm
+\end{cases}
+\end{cases}
+\end{equation}
 \end{definition}
 
-\begin{definition} (Terminal Object).
-Is such object $Ob_C$, that $\Pi_{x,y:Ob_C}$ $isContr(Hom_C(y,x))$.
+\begin{definition} (Синтаксис мовної категорії $O_{MLTT}$).
+Мова $O_{MLTT}$ включає в себе синтаксиси трьох типів
+теорії Мартіна-Льофа: $O_\Pi$, $O_\Sigma$, $O_=$.
 \begin{lstlisting}
-isInitial (C: precategory) (x: carrier C): U
-  = (y: carrier C) -> isContr (hom C x y)
-isTerminal (C: precategory) (y: carrier C): U
-  = (x: carrier C) -> isContr (hom C x y)
-initial (C: precategory): U
-  = (x: carrier C) * isInitial  C x
-terminal(C: precategory): U
-  = (y: carrier C) * isTerminal C y
-\end{lstlisting}
-\end{definition}
-
-\subsection{Функтор}
-\begin{definition} (Category Functor). Let $A$ and $B$ be precategories.
-A functor $F : A \rightarrow B$ consists of: (i) A function $F_{Ob}: Ob_hA \rightarrow Ob_B$;
-(ii) for each $a,b:Ob_A$, a function $F_{Hom}:Hom_A(a,b)\rightarrow Hom_B(F_{Ob}(a),F_{Ob}(b))$;
-(iii) for each $a:Ob_A$, $F_{Ob}(1_a) = 1_{F_{Ob}}(a)$;
-(iv) for $a,b,c:Ob_A$ and $f: Hom_A(a,b)$ and $g: Hom_A(b,c)$, $F(g\circ f) = F_{Hom}(g)\circ F_{Hom}(f)$.
-\begin{lstlisting}
-catfunctor (A B: precategory): U
-  = (ob: carrier A -> carrier B)
-  * (mor: (x y: carrier A) -> hom A x y -> hom B (ob x) (ob y))
-  * (id: (x: carrier A) -> Path (hom B (ob x) (ob x))
-    (mor x x (path A x)) (path B (ob x)))
-  * ((x y z: carrier A) -> (f: hom A x y) -> (g: hom A y z) ->
-     Path (hom B (ob x) (ob z)) (mor x z (compose A x y z f g))
-      (compose B (ob x) (ob y) (ob z) (mor x y f) (mor y z g)))
+data MLTT = mpure (_: pts MLTT)
+          | msigma (_: exists MLTT)
+          | mid (_: identity MLTT)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Натуральні перетворення}
-\begin{definition} (Natural Transformation).
-For functors $F,G: C \rightarrow D$,
-a nagtural transformation $\gamma: F \rightarrow G$ consists of:
-(i) for each $x:C$, a morphism $\gamma_a : Hom_D(F(x),G(x))$;
-(ii) for each $x,y:C$ and $f: Hom_C(x,y)$, $G(f)\circ \gamma_x = \gamma_y \circ F(g)$.
-\begin{lstlisting}
-isNaturalTrans (C D: precategory)
-               (F G: catfunctor C D)
-               (eta: (x: carrier C) -> hom D (F.1 x) (G.1 x)): U
-  = (x y: carrier C) (h: hom C x y) ->
-     Path (hom D (F.1 x) (G.1 y))
-     (compose D (F.1 x) (F.1 y) (G.1 y) (F.2.1 x y h) (eta y))
-     (compose D (F.1 x) (G.1 x) (G.1 y) (eta x) (G.2.1 x y h))
-
-ntrans (C D: precategory) (F G: catfunctor C D): U
-  = (eta: (x: carrier C) -> hom D (F.1 x) (G.1 x))
-  * (isNaturalTrans C D F G eta)
+\begin{definition} (Синтаксичне дерево $O_\Sigma$).
+Також можна до чистої системи додати $\Sigma$-тип,
+піднявши типову систему до мови $O_{MLTT-72}$ або $O_{\Pi\Sigma}$ :
+\begin{lstlisting}[mathescape=true]
+data exists (lang: U)
+   = sigma (n: name) (a b: lang)
+   | pair (a b: lang)
+   | fst (p: lang)
+   | snd (p: lang)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Розширення Кана}
-\begin{definition} (Kan Extension).
-\begin{lstlisting}
-extension (C C' D: precategory)
-    (K: catfunctor C C') (G: catfunctor C D) : U
-  = (F: catfunctor C' D)
-  * (ntrans C D (compFunctor C C' D K F) G)
+\begin{definition} (Синтаксичне дерево $O_=$).
+Додавши тип рівності можно підняти систему ще на одну сходинку,
+до $O_{MLTT-84}$ або $O_{\Pi\Sigma=}$:
+\begin{lstlisting}[mathescape=true]
+data identity (lang: U)
+   = id (t a b: lang)
+   | id_intro (a b: lang)
+   | id_elim (a b c d e: lang)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Ізоморфізм категорій}
-\begin{definition} (Category Isomorphism).
-A morphism $f : Hom_A(a,b)$ is an iso
-if there is a morphism $g: Hom_A(b,a)$ such that
-$1_a =_\eta g \circ f$ and
-$f \circ g =_\epsilon 1_b = g$. "f is iso" is
-a mere proposition.
-If A is a precategory and $a,b: A$,
-then $a = b \rightarrow iso_A(a,b)$ (idtoiso).
+\subsection{Система індуктивних типів $O_{ITS}$}
+
+\begin{definition} (Мовна категорія $O_{ITS}$).
+\begin{equation}
+O_{ITS} =
+\begin{cases}
+Ob: \{\ X: maybe\ ITS, target: maybe\ CPS\ \} \\
+Hom: \begin{cases}
+type,norm,induction: X \rightarrow X, extract: X \rightarrow target \\
+certify : X \rightarrow target \\
+cerfity = type \circ norm \circ induction \circ extract \\
+\end{cases}
+\end{cases}
+\end{equation}
+\end{definition}
+
+Мова індуктивних типів дозволяє безпосередньо кодувати індуктивні типи,
+не використовуючи схеми кодування Бома, містить усі попередні мовні синтаксиси:
+$O_=$, $O_\Sigma$, $O_\Pi$.
+
+\begin{definition} (Синтаксичне дерево мовної категорії $O_{ITS}$).
 \begin{lstlisting}
-iso (C: precategory) (A B: carrier C): U
-  = (f: hom C A B)
-  * (g: hom C B A)
-  * (eta: Path (hom C A A) (compose C A B A f g) (path C A))
-  * (Path (hom C B B) (compose C B A B g f) (path C B))
+data ITS = ipure (_: pts ITS)
+         | isigma (_: exists ITS)
+         | iid (_: identity ITS)
+         | iITS (_: ind ITS)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Резк-поповнення}
-\begin{definition} (Category).
-A category is a precategory
-such that for all $a:Ob_C$, the $\Pi_{A:Ob_C} isContr \Sigma_{B:Ob_C} iso_C(A,B)$.
+Мова містить наступні допоміжні визначення: i) телескопу,
+який містить послідовність елементів мови; ii) розгалуження,
+як конструкцій case оператора; iii) імен конструкторів індуктивного типу.
+
 \begin{lstlisting}
-isCategory (C: precategory): U
-  = (A: carrier C) -> isContr ((B: carrier C) * iso C A B)
-    category: U = (C: precategory) * isCategory C
+data tele   (A: U) = emp | tel (n: name) (b: A) (t: tele A)
+data branch (A: U) =        br (n: name) (args: list name) (term: A)
+data label  (A: U) =       lab (n: name) (t: tele A)
+                         | com (n: name) (t: tele A) (dim: list name)
+                               (s: list  (prod (prod name bool) A))
+\end{lstlisting}
+
+\begin{definition} (Синтаксичне дерево $O_*$).
+Правило формації, конструктора та елімінатора визначається синтаксичним деревом $O_*$:
+\begin{lstlisting}
+data ind (lang: U)
+   = datum  (n: name) (t: tele lang) (labels:   list (label lang))
+   | case   (n: name) (t: lang)      (branches: list (branch lang))
+   | ctor   (n: name)                (args:     list lang)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Конструкції}
+\subsection{Гомотопічна система типів $O_{HTS}$}
 
-\subsubsection{(Ко)продукти категорій}
-\begin{definition} (Category Product).
+\begin{definition} (Мовна категорія $O_{HTS}$).
+$$
+O_{HTS} =
+\begin{cases}
+Ob: \{\ maybe\ HTS\ \} \\
+Hom: \begin{cases}
+type,norm: Ob \rightarrow Ob \\
+certify: Ob \rightarrow Ob = type \circ norm \\
+\end{cases}
+\end{cases}
+$$
+\end{definition}
+
+\begin{definition} (Синтаксис мовної категорії $O_{HTS}$).
+Синтаксис гомотопічної мовної категорії містить усі
+попередні мовні синтаксиси: $O_I$, $O_W$, $O_=$, $O_\Sigma$, $O_\Pi$:
 \begin{lstlisting}
-Product    (X Y: precategory) : precategory
-Coproduct  (X Y: precategory) : precategory
+data HTS = hpure (_: pts HTS)
+         | hsigma (_: exists HTS)
+         | hid (_: identity HTS)
+         | hind (_: ind HTS)
+         | homotopy (_: hts HTS)
 \end{lstlisting}
 \end{definition}
 
-\subsubsection{Обернена категорія}
-\begin{definition} (Opposite Category). The opposite category to category $C$
-is a category $C^{op}$ with same structure, except all arrows are inverted.
+Гомотопічна типа наслідує $O_{ITS}$ але модифіковану з
+Path-типом в індуктивних визначеннях, структурою композиції,
+анонсує Path-тип (формація, конструктор, та елімінатор)
+як лямбда функцію на відрізку, а також склейку типів у всесвіті
+та склейку змінних з відповідними елімінаторами.
+
+\begin{definition} (Синтаксичне дерево $O_I$).
 \begin{lstlisting}
-opCat (P: precategory): precategory
+data hts (lang: U)
+   = path (t a b: lang)
+   | plam (n: name) (a: alg) (b: lang)
+   | papp (f: name) (a: lang) (p: alg)
+   | comp_ (a b: lang)
+   | fill_ (a b c: lang)
+   | glue_ (a b c: lang)
+   | glue_elem (a b: lang)
+   | unglue_elem (a b: lang)
 \end{lstlisting}
 \end{definition}
 
-\subsubsection{(Ко)слайс категорія}
-\begin{definition} (Slice Category).
-\end{definition}
-\begin{definition} (Coslice Category).
-\begin{lstlisting}
-sliceCat (C D: precategory)
-    (a: carrier (opCat C))
-    (F: catfunctor D (opCat C))
-  : precategory
-  = cosliceCat (opCat C) D a F
+Таким чином,
+$O_{HTS}$ містить два Id-типа, один унаслідований від $O_=$,
+а інший який міститься в синтаксичному дереві $O_I$.
 
-cosliceCat (C D: precategory)
-  (a: carrier C)
-  (F: catfunctor D C) : precategory
+\section{Формальне cередовище виконання}
+Формальне середовище виконання складається з інтерпретатора
+(нетитизованого $\lambda$-числення) та числення акторів (процесів, черг, таймерів).
+Інтерпретатор та операційна система включені в систему доведення теорем
+для уніфікації всіх сигнатур системи та формалізації самого інтерпретатора
+як системи виконання. Слід зазначити, що не
+завжди є змога зробити екстракт в $O_{CPS}$, тому об'єкти мовних
+категорій є $maybe$-типами.
+$$
+O_{CPS}: O_\lambda \rightarrow O_\pi \rightarrow O_\mu \rightarrow U
+$$
+Далі буде йтися тільки про формальні інтерпретатори,
+так як вони є найбільш компакними формами мов для
+верифікації (в порівнянні з моделями System F).
+Таким чином будемо розглядати формальне середовище виконання, як
+сукупність інтерпретатора та операційної системи.
+
+В цьому розділі ми побудуємо надшвидку імплементацію інтерпретатора,
+яка цілком, разом зі своїми програмами, розміщується в кеш-памяті
+першого рівня процесору, та здатна до AVX векторизацій засобами мови Rust.
+Як промислова опція, підтримується також екстракт
+в байт-код інтерпретатора BEAM віртуальної машини Erlang.
+
+\subsection{Категорія середовища виконання $O_{CPS}$}
+
+\begin{definition} (Категорія середовища виконнання$O_{СPS}$).
+$$
+O_{CPS} =
+\begin{cases}
+Ob: \{\ maybe\ CPS\ \} \\
+Hom: \{\ eval: Ob \rightarrow Ob\ \}
+\end{cases}
+$$
+\end{definition}
+
+Синтаксис середовища виконання може містити наступні синтаксиси:
+$O_\lambda$, $O_\pi$, $O_\mu$.
+
+\begin{definition} (Синтаксис мовної категорії $O_{HTS}$).
+\begin{lstlisting}
+data CPS = church (_: lambda CPS)
+         | milner (_: pi     CPS)
+         | tensor (_: mu     CPS)
 \end{lstlisting}
 \end{definition}
 
-\subsubsection{Універсальна властивість}
-\begin{definition} (Universal Mapping Property).
+\begin{definition} (Синтаксичне дерево $O_\lambda$). Інтерпретатор визначається
+своїм трьома конструкторами: номер змінної (індекс де Брейна),
+лямбда функція та її апплікація:
 \begin{lstlisting}
-initArr (C D: precategory)
-  (a: carrier C)
-  (F: catfunctor D C): U = initial (cosliceCat C D a F)
+data lambda = var (x: nat)
+            | lam (l: nat) (d: cps)
+            | app (f a: cps)
+\end{lstlisting}
+Мовою інтерпретаторів є нетипизоване лямбда числення, однак в залежності
+від складності інтерпретатора це дерево може виглядати по-різному.
+\end{definition}
 
-termArr (C D: precategory)
-  (a: carrier (opCat C))
-  (F: catfunctor D (opCat C)): U = terminal (sliceCat C D a F)
+\begin{definition} (Синтаксичне дерево $O_\pi$).
+Правило формації, конструктора та елімінатора визначається синтаксичним деревом $O_*$:
+\begin{lstlisting}
+data pi (lang: U)
+   = process (protocol: lang)
+   | spawn (cursors: lang) (core: nat) (program: lang)
+   | snd (cursor: lang) (data: lang)
+   | rcv (cursor: lang)
+   | pub (size: nat)
+   | sub (cursor: lang)
 \end{lstlisting}
 \end{definition}
 
-\subsubsection{Одинична категорія}
-\begin{definition} (Unit Category).
-In unit category both $Ob = \top$ and $Hom = \top$.
-\begin{lstlisting}
-unitCat: precategory
-\end{lstlisting}
-\end{definition}
+Кожна секція цієї глави буде присвячена цим мовним компонентам
+системи доведення теорем. В кінці розділу дається повна система, яка включає в себе усі
+мови та усі мовні перетворення.
 
-\subsection{Приклади}
-\subsubsection{Категорія множин}
-\begin{definition} (Category of Sets).
-\begin{lstlisting}
-Set: precategory = ((Ob,Hom),id,c,HomSet,L,R,Q) where
-  Ob: U = SET
-  Hom (A B: Ob): U = A.1 -> B.1
-  id (A: Ob): Hom A A = idfun A.1
-  c (A B C: Ob) (f: Hom A B) (g: Hom B C): Hom A C
-   = o A.1 B.1 C.1 g f
-  HomSet (A B: Ob): isSet (Hom A B) = setFun A.1 B.1 B.2
-  L (A B: Ob) (f: Hom A B): Path (Hom A B) (c A A B (id A) f) f
-   = refl (Hom A B) f
-  R (A B: Ob) (f: Hom A B): Path (Hom A B) (c A B B f (id B)) f
-   = refl (Hom A B) f
-  Q (A B C D: Ob) (f: Hom A B) (g: Hom B C) (h: Hom C D)
-   : Path (Hom A D) (c A C D (c A B C f g) h) (c A B D f (c B C D g h))
-   = refl (Hom A D) (c A B D f (c B C D g h))
-\end{lstlisting}
-\end{definition}
+\section{Чиста система типів PTS$^\infty$}
 
-\subsubsection{Категорія функцій}
-\begin{definition} (Category of Functions over Sets).
-\begin{lstlisting}
-Functions (X Y: U) (Z: isSet Y): precategory
-   = ((Ob,Hom),id,c,HomSet,L,R,Q) where
-  Ob: U = X -> Y
-  Hom (A B: Ob): U = id (X -> Y)
-  id (A: Ob): Hom A A = idfun (X -> Y)
-  c (A B C: Ob) (f: Hom A B) (g: Hom B C): Hom A C = idfun (X -> Y)
-  HomSet (A B: Ob): isSet (Hom A B) = setFun Ob Ob (setFun X Y Z)
-  L (A B: Ob) (f: Hom A B): Path (Hom A B) (c A A B (id A) f) f = axiom
-  R (A B: Ob) (f: Hom A B): Path (Hom A B) (c A B B f (id B)) f = axiom
-  Q (A B C D: Ob) (f: Hom A B) (g: Hom B C) (h: Hom C D)
-   : Path (Hom A D) (c A C D (c A B C f g) h)
-                    (c A B D f (c B C D g h)) = axiom
-\end{lstlisting}
-\end{definition}
+IEEE\footnote{IEEE Std 1012-2016  --- V\&V Software verification and validation} стандарт
+та регуляторні документи ESA\footnote{ESA PSS-05-10 1-1 1995 -- Guide to software verification and validation}
+визначають інтрументи та підходи до виробничого процесу верифікації та валідації.
+Найбільш розвинені та потужні засоби вимагають застосування математичних мов та нотацій.
+Ера верифікованої математики була започаткована верифікатором AUTOMATH\cite{deBruijn83} (де Брейн) розробленого
+під керівництвом де Брейна, а також розвиток теорії типів Мартіна-Льофа\cite{Lof84}.
+Сьогодні ми маємо Lean, Coq, F*, Agda мови які використовують числення
+конструкцій, Calculus of Constructions\cite{Coq88} (CoC)
+та числення індуктивних типів (Calculus of Inductive Constructions\cite{Pfenning89} (CiC).
+Пізніше учень де Брейна, Хенк Барендрехт класифікував послаблені чисті
+системи типів по трьом осям та візуазізував це за допомогою лямбда-куба\cite{Henk93}.
+Чисті мови програмування вже були імплементовані раніше
+(Morte\footnote{Gabriel Gonzalez. Haskell Morte Library \url{https://github.com/Gabriel439/Haskell-Morte-Library}} Габріеля Гонзалеза, Henk\cite{Erik97} Еріка Мейера).
+Чисті системи типів це системи з однм $\Pi$-типом (або ще і $\Sigma$ як в ECC\cite{Ore92}, Оре),
+з можливими розширеннями, такими як PTS$^\infty$ з бескінечною кількістю всесвітів\cite{Tonpa18} (Сохацький),
+Cedile з self-типами\cite{Fu14}\cite{Stump17} (Стамп, Фу), система з К-правилами\cite{Barthe95} (Барте).
 
-\subsubsection{Категорія категорій}
-\begin{definition} (Category of Categories).
-\begin{lstlisting}
-Cat: precategory = ((Ob,Hom),id,c,HomSet,L,R,Q) where
-  Ob: U = precategory
-  Hom (A B: Ob): U = catfunctor A B
-  id (A: Ob): catfunctor A A = idFunctor A
-  c (A B C: Ob) (f: Hom A B) (g: Hom B C): Hom A C
-   = compFunctor A B C f g
-  HomSet (A B: Ob): isSet (Hom A B) = axiom
-  L (A B: Ob) (f: Hom A B): Path (Hom A B) (c A A B (id A) f) f = axiom
-  R (A B: Ob) (f: Hom A B): Path (Hom A B) (c A B B f (id B)) f = axiom
-  Q (A B C D: Ob) (f: Hom A B) (g: Hom B C) (h: Hom C D)
-   : Path (Hom A D) (c A C D (c A B C f g) h)
-                    (c A B D f (c B C D g h)) = axiom
-\end{lstlisting}
-\end{definition}
+Головна мотивація чистих систем -- це простота аналізу ядра верифікатора,
+можливість застосування сильної нормалізації та довірена зовнішня верифікація
+та сертифікація завдяки простоті верифікатора (type checker), це означає, що
+алгоритм верифікації повинен бути настільки простим, аби можна було
+просто імплементувати його на будь-якій мові програмування. Приклади застовування
+тут можуть бути:
+1) формальна мова блокчейн контрактів (Pluto
+   \footnote{Rebecca Valentine. Formal Specification of the Plutus Core Language. 2017.
+             \url{https://iohk.io/research/papers/#JT5XKNBP}});
+2) сертифіковані обчислення для інтерпретаторів;
+3) платіжні системи.
 
-\subsubsection{Категорія функторів}
-\begin{definition} (Category of Functors).
-\begin{lstlisting}
-Func (X Y: precategory): precategory
-   = ((Ob,Hom),id,c,HomSet,L,R,Q) where
-  Ob: U = catfunctor X Y
-  Hom (A B: Ob): U = ntrans X Y A B
-  id (A: Ob): ntrans X Y A A = axiom
-  c (A B C: Ob) (f: Hom A B) (g: Hom B C): Hom A C = axiom
-  HomSet (A B: Ob): isSet (Hom A B) = axiom
-  L (A B: Ob) (f: Hom A B): Path (Hom A B) (c A A B (id A) f) f = axiom
-  R (A B: Ob) (f: Hom A B): Path (Hom A B) (c A B B f (id B)) f = axiom
-  Q (A B C D: Ob) (f: Hom A B) (g: Hom B C) (h: Hom C D)
-   : Path (Hom A D) (c A C D (c A B C f g) h)
-                    (c A B D f (c B C D g h)) = axiom
-\end{lstlisting}
-\end{definition}
+\subsection{Генерація сертифікованих програм}
+Згідно ізоморфізму Каррі-Говарда-Ламбека або інтерпретації Брауера-Гейтінга-Колмогорова
+існує взаємноознозначна відповідність між доведеннями теорем (або пруфтермами)
+та лямбда функціями в теорії типів Мартіна-Льофа\cite{Lof84}.
+Так як специфікація та доведення її відоповідності для певної програми
+відбувається за допомогою мови з залежними типами, ми можемо екстрагувати
+цільову імплементацію (зі стертою інформацією про типи) сертифікованої программи
+в довільну мову програмування. У якості такої цільової мови підходять
+майже усі інтерпретатор безтипового лямбда числення, такі як JavaScript,
+Erlang, PyPy, LuaJIT, K.
 
-\subsection{k-морфізми}
+Більш розвинені практики та підходи до кодогенерації та екстрагуванню
+сертифікованих програм полягає у генерації С++ чи Rust програм, або програм
+для нижчих систем лямюда-кубу, таких як System F або System F$_\omega$.
+У цій роботі представлений екстракт в мову Erlang у якості цільового інтерпретатору.
 
-\begin{definition} ($k$-Morphism).
-The k-morphism is defined as morphism
-between $(k-1)$-morphism. The base of induction, the $0$-morphism is
-defined as object of $1$-category, which is precategory.
-\begin{lstlisting}
-equiv: U
-functor (C D: cat): U
-ntrans (C D: cat) (F G: functor C D): U
-modification (C D: cat) (F G: functor C D) (I J: ntrans C D F G): U
-\end{lstlisting}
-І так далі.
-\end{definition}
-
-\subsection{2-категорія}
-\begin{definition} (2-Category).
-\begin{lstlisting}
-Cat2 : U
-  = (Ob: U)
-  * (Hom:  (A B: Ob) -> U)
-  * (Hom2: (A B: Ob) -> (C F: Hom A B) -> U)
-  * (id:     (A: Ob) -> Hom A A)
-  * (id2:    (A: Ob) -> (B: Hom A A) -> Hom2 A A B B)
-  * (c:  (A B C: Ob) (f: Hom A B) (g: Hom B C) -> Hom A C)
-  * (c2:   (A B: Ob) (X Y Z: Hom A B)
-    (f: Hom2 A B X Y) (g: Hom2 A B Y Z) -> Hom2 A B X Z)
-\end{lstlisting}
-\end{definition}
-
-\subsection{Аддитивна категорія}
-
-%\subsection{Абелева категорія}
-
-\subsection{Група Гротендіка}
-
-\subsection{Категорія Гротендіка}
-
-\section{Теорія топосів}
-
-One can admit two topos theory lineages. One lineage takes its roots from published
-by Jean Leray in 1945 initial work on sheaves and spectral sequences. Later this lineage
-was developed by Henri Paul Cartan, André Weil. The peak of lineage was settled
-with works by Jean-Pierre Serre, Alexander Grothendieck, and Roger Godement.
-
-Second remarkable lineage take its root from William Lawvere and
-Myles Tierney. The main contribution is the reformulation of Grothendieck topology
-by using subobject classifier.
-
-\begin{definition} (Categorical Pullback).
-The pullback of the cospan $A \mapright{f} C \mapleft{g} B$ is a object $A \times_{C} B$ with
-morphisms $pb_1 : \times_C \rightarrow A $, $pb_2 : \times_C \rightarrow B$, such that
-diagram commutes:
+\begin{table}[h]
 \begin{center}
-\begin{tikzpicture}
-  \matrix (m) [matrix of math nodes,row sep=3em,column sep=3em,minimum width=2em]
-  {
-     A \times_{C} B & B \\
-     A & C\\};
-  \path[-stealth]
-    (m-1-1) edge node [above] {$pb_2$} (m-1-2)
-            edge node [above] {$$} (m-2-2)
-    (m-1-1) edge node [left]  {$f$} (m-2-1)
-    (m-1-2) edge node [right] {$pb_1$} (m-2-2)
-    (m-2-1) edge node [above] {$g$} (m-2-2);
-\end{tikzpicture}
+\caption{List of languages, tried as verification targets}
+\tabcolsep7pt\begin{tabular}{lcccc}
+\hline
+\textbf{Target} & \textbf{Class} & \textbf{Intermediate} & \textbf{Theory}\\
+\hline
+JVM        & interpreter/native   & Java       & F-sub\footnote{System F wit bounded quantification}\\
+JVM        & interpreter/native   & Scala      & System F-omega\\
+CLR        & interpreter/native   & F\#        & System F-omega\\
+GHC        & compiler/native      & Haskell    & System D\\
+GHC        & compiler/native      & Morte      & CoC\\
+GHC,OCaml  & compiler/native      & Coq        & CiC\\
+O,BEAM     & interpreter          & Om         & PTS$^\infty$ \\
+JavaScript & interpreter/native   & PureScript & System F\\
+\hline
+\end{tabular}
 \end{center}
-Pullback $(\times_C,pb_1,pb_2)$ must be universal, means for any $(D,q_1,q_2)$
-for which diagram also commutes there must exists a unique $u: D \rightarrow \times_C$,
-such that $pb_1 \circ u = q_1$ and $pb_2 \circ q_2$.
-\begin{lstlisting}
-homTo  (C: precategory) (X: carrier C): U
-  = (Y: carrier C) * hom C Y X
-cospan (C: precategory): U
-  = (X: carrier C) * (_: homTo C X) * homTo C X
-cospanCone (C: precategory) (D: cospan C): U
-  = (W: carrier C) * hasCospanCone C D W
-cospanConeHom (C: precategory) (D: cospan C)
-    (E1 E2: cospanCone C D) : U
-  = (h: hom C E1.1 E2.1) * isCospanConeHom C D E1 E2 h
-isPullback (C: precategory) (D: cospan C) (E: cospanCone C D) : U
-  = (h: cospanCone C D) -> isContr (cospanConeHom C D h E)
-hasPullback (C: precategory) (D: cospan C) : U
-  = (E: cospanCone C D) * isPullback C D E
+\end{table}
+
+\textbf{PTS синтаксиси}. Мінімальне ядро з однією аксіомою
+сприймає декілька лямбда ситаксисів.
+Перший синтаксис сумісний з системою програмування
+$morte$\footnote{http://github.com/Gabriel439/Haskell-Morte-Library}, та походить від неї.
+Інший синтаксис сумісний з синтаксисом $cubical$\footnote{http://github.com/mortberg/cubicaltt}.
+Планувалося також підтримати синтаксис $caramel$\footnote{https://github.com/MaiaVictor/caramel}.
+
+\begin{equation}
+\begin{cases}
+Sorts = U.\{i\},\ i : Nat\\
+Axioms = U.\{i\} : U.\{inc\ i\}\\
+Rules = U.\{i\} \leadsto U.\{j\} : U.\{max\ i\ j\}\\
+\end{cases}
+\end{equation}
+
+Мова програмування Ом -- це мова з залежними типами, яка є розширенням
+числення конструкцій (Calculus of Constructions, CoC) Тері Кокана. Саме з числення
+конструкцій починається сучасна обчислювальна математика. В додаток до CoC,
+наша мова Ом має предикативну ієрархію індексованих всесвітів. В цій мові немає
+аксіоми рекурсії для безпосереднього визначення рекурсивних типів. Однак в цій мові
+вцілому, рекурсивні дерева та корекурсія може бути визначена, або як кажуть, закодована.
+Така система аксіом називається системою з однією аксіомою (або чистою системою), тому що в ній
+існує тільки Пі-тип, а для кожного типу в теорії типів Мартіна Льофа існує п'ять
+конструкцій: формація, інтро, елімінатор, бета та ета правила.
+
+Усі терми підчиняються системі аксіом \textbf{Axioms} всередині
+послідовності всесвітів \textbf{Sorts} та складність залежного
+терму відповідає максимальній складності домена та кодомена
+(правила \textbf{Rules}). Таким чином визначається простір всесвітів,
+та його конфігурація може бути записана згідно нотації
+Барендрехта для систем з чистими типами:
+
+Проміжна мова чистої системи типів Ом базується на мові
+Henk\cite{Erik97}, вперше описаній Еріком Мейером та Саймоном Пейтоном Джонсом в 1997 році.
+Пізніше Габріель Гонзалез імплементував на мові Haskell
+верифікатор з посиланням на Henk, та використував кодування Бома для нерекурсивного
+кодування рекурсивних індуктивних типів. Ця мова базується лише на $\Pi$-типі,
+$\lambda$-функції, її елімінатора аплікації, $\beta$-редукції та $\eta$-експансії.
+Дизайн мови Ом нагадує дизайн мов Henk та Morte.
+Ця мова призначена бути максимально простою (повна імплементація займає 300 рядків),
+формально верифікованою, здатною продукувати сертифіковані програми та
+розповсюджувати їх за межі комп'ютера по мережах та недовірених каналах зв'язку,
+та компілювати (верифікувати та екстрагувати) на цільових платформах за допомогою
+тієї ж мови Ом, можливо імплементовоної на іншій мові програмування та вбудованої
+в основну систему.
+
+\subsection{Синтаксис}
+
+Синтаксис PTS сумісний з численням конструкцій (CoC) Тері Кокана,
+та такими мовами як Morte та Henk.
+Однак в системі PTS присутній індекс для всесвітів який
+представлений натуральними числами. Тут наведений синтаксис у BNF нотації
+
+\begin{lstlisting}[mathescape=true]
+     I := #list #nat
+     U := * + * . #nat
+     O := U + I + ( O ) + O O + O $\rightarrow$ O
+        + $\lambda$ ( I : O ) $\rightarrow$ O
+        + $\forall$ ( I : O ) $\rightarrow$ O
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} (Category Functor).
-Let $A$ and $B$ be precategories.
-A functor $F : A \rightarrow B$ consists of: (i) A function $F_{Ob}: Ob_hA \rightarrow Ob_B$;
-(ii) for each $a,b:Ob_A$, a function $F_{Hom}:Hom_A(a,b)\rightarrow Hom_B(F_{Ob}(a),F_{Ob}(b))$;
-(iii) for each $a:Ob_A$, $F_{Ob}(1_a) = 1_{F_{Ob}}(a)$;
-(iv) for $a,b,c:Ob_A$ and $f: Hom_A(a,b)$ and $g: Hom_A(b,c)$, $F(g\circ f) = F_{Hom}(g)\circ F_{Hom}(f)$.
-\begin{lstlisting}
-catfunctor (A B: precategory): U
-  = (ob: carrier A -> carrier B)
-  * (mor: (x y:carrier A)->hom A x y->hom B(ob x)(ob y))
-  * (id: (x: carrier A) -> Path (hom B (ob x) (ob x))
-    (mor x x (path A x)) (path B (ob x)))
-  * ((x y z: carrier A) -> (f: hom A x y) -> (g: hom A y z) ->
-    Path (hom B (ob x) (ob z)) (mor x z (compose A x y z f g))
-         (compose B (ob x) (ob y) (ob z) (mor x y f) (mor y z g)))
+Тут + --- сумма виразів, '.' --- конкатенація терміналів без пробілу,
+:= --- оператор визначення BNF-правила, \#empty, \#nat, \#list --- вбудовані типи BNF-нотації
+--- синтаксичні елементи BNF нотації,
+а *,:, $\rightarrow$, (, ), $\lambda$, $\forall$ -- термінали або синтаксичні елементи мови програмування.
+Еквівалентне визначення як ініціальний об'єкт категорій $O_{PTS}$ або $O_\Pi$
+який може вмістити цей синтаксис містить всі правила виводу
+внутрішньої мови категорії.
+
+\begin{lstlisting}[mathescape=true]
+data pts (lang: U)
+   = star             (n: nat)
+   | var    (x: name) (l: nat)
+   | pi     (x: name) (l: nat) (d c: lang)
+   | remote (n: name) (n: nat)
+   | lambda (x: name) (l: nat) (d c: lang)
+   | app                       (f a: lang)
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} (Terminal Object). Is such object $\mathrm{Ob}_C$,
-that
+\subsection{Всесвіти}
+Мова PTS$^\infty$ -- це лямбда числення з залежними типами вищого порядку,
+розширення числення конструкцій Кокана, або системи P$_\omega$ Барендрехта,
+з предикативною (імпредикативною) ієрархією індексованих всесвітів.
+Це розширення мотивоване консистентністю\cite{Lof75} в залежній теорії типів та
+неможливістю кодування парадоксів Жирара-Хуркенса-Рассела\footnote{Так званий парадокс голяра який виникає в системах $U : U$}. Також для
+забезпечення консистентності в мові PTS відсутня аксіома \lstinline{Fixpoint}, хоча
+за допомогою рекурсивного трактування конструктора \lstinline{remote},
+така можливість зберігається.
+
 $$
-    \prod_{x,y:\mathrm{Ob}_C} \mathrm{isContr} (\mathrm{Hom}_C(y,x)).
+    \mathrm{U_0} : \mathrm{U}_1 : \mathrm{U}_2 : \mathrm{U}_3 : ...
 $$
-\begin{lstlisting}
-isTerminal (C: precategory) (y: carrier C): U
-  = (x: carrier C) -> isContr (hom C x y)
-terminal (C: precategory): U
-  = (y: carrier C) * isTerminal C y
+
+Де $\mathrm{U_0}$ --- імпредикативний всесвіт,
+   $\mathrm{U_1}$ --- перший предикативний всесвіт,
+   $\mathrm{U_2}$ --- другий предикативний всесвіт,
+   $\mathrm{U_3}$ --- третій предикативний всесвіт і т.д.
+
+\begin{equation}
+\tag{S}
+\dfrac
+{o : Nat}
+{U_o}
+\end{equation}
+
+\subsubsection*{Предикативні всесвіти}
+Всі терми підпорядковуються системі аксіом А для послідовності всесвітів S.
+Складність R залежності термів дорівнює максимальнії складної термів з
+яких складаєтсья формула (або вираз мови). Система всесвітів описується
+згідно SAR-нотації Барендрехта. Зауважте, що предикативні всесвіти
+несумісні в Бом кодуванням, але ви можете переключати предикативність.
+
+\[
+\tag{$A_1$}
+\dfrac{i: Nat, j: Nat, i < j}{U_i : U_j}
+\]
+
+\[
+\tag{$R_1$}
+\dfrac{i : Nat, j : Nat}{U_i \rightarrow U_j : U_{max(i,j)} }
+\]
+
+\subsubsection*{Імпредикативні всесвіти}
+Стягуваний імпредикативний простір внизу ієрархії є єдиним можливим розширенням
+предикативної ієрархії для того аби вона залишалась консистентною. Однак
+в чистій системі типів PTS підтримується ієрархія бескінечних імпредикативних всесвітів.
+
+\begin{equation}
+\tag{$A_2$}
+\dfrac
+{i: Nat}
+{U_i : U_{i+1}}
+\end{equation}
+
+\begin{equation}
+\tag{$R_2$}
+\dfrac
+{i : Nat,\ \ \ \ j : Nat}
+{U_i \rightarrow U_{j} : U_{j}}
+\end{equation}
+
+\subsection{Контексти}
+
+Контексти моделюються словником з іменами змінних в верифікаторі.
+Він може бути типизований як \lstinline{list Sigma}.
+Правило елімінації тут не дається, після використання функції верифікації,
+словник вивільняється з пам'яті.
+
+\begin{equation}
+\tag{Ctx-formation}
+\dfrac
+{}
+{\Gamma : Ctx}
+\end{equation}
+
+\begin{equation}
+\tag{Ctx-intro$_1$}
+\dfrac
+{\Gamma : Ctx}
+{\emptyset : \Gamma}
+\end{equation}
+
+\begin{equation}
+\tag{Ctx-intro$_2$}
+\dfrac
+{A : U_i,\ \ \ \ x : A,\ \ \ \ \Gamma : Ctx}
+{(x : A)\ \vdash\ \Gamma : Ctx}
+\end{equation}
+
+\subsection{Операційна семантика}
+
+Операційна семантика --- це правила обчислення,
+або $\beta$-,$\eta$-правила фьюжену інтро-правила та елімінаторів.
+для визначення яких необхідно визначити:
+1) інтро-правила, їх тип (правило формації), та класс (тип правила формації);
+2) правило елімінації та залежної елімінації (індукції).
+Таким чином будемо вважати, що операційна семантика системи типів $O_{PTS}$
+буде складатися з 5 правил: формації, інтро-правило,
+залежний елімінатор (індукція), $\beta$-редукція або правило обчислення,
+$\eta$-експансія або правило унікальності.
+
+\begin{equation}
+\tag{$\Pi$-formation}
+\dfrac
+{A:U_i\ ,\ x:A \vdash B : U_j}
+{\Pi\ (x:A) \rightarrow B : U_{p(i,j)}}
+\end{equation}
+
+\begin{equation}
+\tag{$\lambda$-intro}
+\dfrac
+{x:A \vdash b : B}
+{\lambda\ (x:A) \rightarrow b : \Pi\ (x: A) \rightarrow B }
+\end{equation}
+
+\begin{equation}
+\tag{$App$-elimination}
+\dfrac
+{f: (\Pi\ (x:A) \rightarrow B)\ \ \ a: A}
+{f\ a : B\ [a/x]}
+\end{equation}
+
+\begin{equation}
+\tag{$\beta$-computation}
+\dfrac
+{x:A \vdash b: B\ \ \ a:A}
+{(\lambda\ (x:A) \rightarrow b)\ a = b\ [a/x] : B\ [a/x]}
+\end{equation}
+
+\begin{equation}
+\tag{subst}
+\dfrac
+{\pi_1 : A\ \ \ \ u:A \vdash \pi_2 : B}
+{[\pi_1/u]\ \pi_2 : B}
+\end{equation}
+
+Перелік теорем (специфікації) для чистої системи типів можуть бути
+прямо вбудовані в теорію типів, таким чином ми отримуємо логічний фреймворк
+для перевірки імплементації залежної теорії.
+
+\begin{lstlisting}[mathescape=true]
+PTS (A: U): U
+  = (Pi_Former: (A -> U) -> U)
+  * (Pi_Intro: (B: A -> U) -> ((a: A) -> B a) -> (Pi A B))
+  * (Pi_Elim: (B: A -> U) (a: A) -> (Pi A B) -> B a)
+  * (Pi_Comp1: (B: A -> U) (a : A) (f: Pi A B) ->
+    Equ (B a) (Pi_Elim B a (Pi_Intro B f)) (f a))
+  * ((B: A -> U) (a: A) (f: Pi A B) ->
+    Equ (Pi A B) f (\(x:A) -> f x))
 \end{lstlisting}
-\end{definition}
 
-%\begin{definition}
-%\begin{lstlisting}
-%\end{lstlisting}
-%\end{definition}
+Доведення цих теорем дано в модулі базової бібліотеки розділу 3.
+Також можна повитися на інші доведення \cite{Henk93}.
+Рівняння обсислювальної семантики (бета та ета правила) визначаються
+за допомогою Path-типів, які визначаються $O_=$ або $O_I$ мовним синтаксисом.
 
-\subsection{Теорія множин}
+Ці рівняння обчислювальної семантики представлені тут як Path-тип в вищій мові.
+В чисту систему типів PTS (з бескінечною кількістю всесвітів)
+для завантаження файлів з локального довіреного сховища додається
+remote конструктор в синтаксичне дерево. Рекурсія по цьому конструктору заборонена.
 
-Here is given the $\infty$-groupoid model of sets.
+Індекси де Брейна діють локально в межах одного імені.
+При додаванні існуючого імені в контекст збільшується індекс цього імені.
+Таким чином PTS верифікатор чистої системи типів відрізняється від
+канонічного приклада алгоритма верифікації CoC\cite{Coq88}. Він включає
+наступні функції мовної категорії: підстановка,
+зсув імені, нормалізація термів, рівність
+за визначенням та верифікація.
 
-\begin{definition} (Mere proposition, $\mathrm{PROP}$).
-A type P is a mere proposition if for all $x,y: P$ we have $x=y$:
-$$
-    \mathrm{isProp}(P) = \prod_{x,y:P}(x=y).
-$$
-\end{definition}
+\subsection{Перевірка типів}
 
-\begin{definition} (0-type).
-A type A is a 0-type is for all $x,y: A$ and $p,q: x =_A y$ we have $p = q$.
-\end{definition}
+Для перевірки типів застосовується наступний алгоритм верифікації, який є основаю
+усіх залежних систем. В чистих системах потрібно бути обережним з \lstinline{remote}
+конструктором. Він використовуються для завантаження типів з локального довіреного сховища.
+При дозволі рекурсії по \lstinline{remote} конструктору можливо реалізувати
+self-типи\cite{Stump17}\cite{Fu14}.
 
-\begin{definition} (1-type).
-A type A is a 1-type if for all $x,y: A$ and $p,q: x =_A y$ and $r,s:p =_{=_A} q$, we have $r = s$.
-\end{definition}
-
-\begin{definition} (A set of elements, $\mathrm{SET}$).
-A type A is a $\mathrm{SET}$ if for all $x,y: A$ and $p,q: x = y$, we have $p = q$:
-$$
-    \mathrm{isSet}(A) = \prod_{x,y:A}\prod_{p,q:x=y}(p=q).
-$$
-\end{definition}
-
-\begin{definition}
-\begin{lstlisting}
-data N = Z  | S (n: N)
-
-n_grpd (A: U) (n: N): U = (a b: A) -> rec A a b n where
-  rec (A: U) (a b: A) : (k: N) -> U
-    = split { Z -> Path A a b ; S n -> n_grpd (Path A a b) n }
-
-isContr (A: U): U = (x: A) * ((y: A) -> Path A x y)
-isProp  (A: U): U = n_grpd A Z
-isSet   (A: U): U = n_grpd A (S Z)
-PROP  : U = (X:U) * isProp X
-SET   : U = (X:U) * isSet X
+\begin{lstlisting}[mathescape=true]
+type (:star,N)     D $\rightarrow$ (:star,N+1)
+     (:var,N,I)    D $\rightarrow$ :true = proplists:is_defined N B, om:keyget N D I
+     (:remote,N)   D $\rightarrow$ om:cache (type N D)
+     (:pi,N,0,I,O) D $\rightarrow$ (:star,h(star(type I D)),star(type O [(N,norm I)|D]))
+     (:fn,N,0,I,O) D $\rightarrow$ let star (type I D), NI = norm I
+                         in (:pi,N,0,NI,type(O,[(N,NI)|D]))
+     (:app,F,A)    D $\rightarrow$ let T = type(F,D),
+                            (:pi,N,0,I,O) = T, :true = eq I (type A D)
+                         in norm (subst O N A)
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} ($\Pi$-Contractability).
-If fiber is set thene path space between any sections is contractible.
-\begin{lstlisting}
-setPi (A: U) (B: A -> U) (h: (x: A) -> isSet (B x)) (f g: Pi A B)
-      (p q: Path (Pi A B) f g)
-    : Path (Path (Pi A B) f g) p q
+\subsection{Індекси де Брейна}
+Зсув переіменовує змінну N в контексті P, тобто додає одиницю для лічильника цієї змінної.
+
+\begin{lstlisting}[mathescape=true]
+  sh (:star,X)     N P $\rightarrow$ (:star,X)
+     (:var,N,I)    N P $\rightarrow$ (:var,N,I+1) when I >= P
+                       $\rightarrow$ (:var,N,I)
+     (:remote,X)   N P $\rightarrow$ (:remote,X)
+     (:pi,N,0,I,O) N P $\rightarrow$ (:pi,N,0,sh I N P,sh O N P+1)
+     (:fn,N,0,I,O) N P $\rightarrow$ (:fn,N,0,sh I N P,sh O N P+1)
+     (:app,L,R)    N P $\rightarrow$ (:app,L,R)
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} ($\Sigma$-Contractability).
-If fiber is set then $\Sigma$ is set.
-\begin{lstlisting}
-setSig (A:U) (B: A -> U) (base: isSet A)
-       (fiber: (x:A) -> isSet (B x)) : isSet (Sigma A B)
+\subsection{Підстановка, нормалізація, рівність}
+Підстановка заміняє змінну у виразі на певний терм.
+
+\begin{lstlisting}[mathescape=true]
+ sub (:star,X)     N V L $\rightarrow$ (:star,X)
+     (:var,N,L)    N V L $\rightarrow$ V
+     (:var,N,I)    N V L $\rightarrow$ (:var,N,I-1) when I > L
+     (:remote,X)   N V L $\rightarrow$ (:remote,X)
+     (:pi,N,0,I,O) N V L $\rightarrow$ (:pi,N,0,sub I N V L,sub O N (sh V N 0) L+1)
+     (:pi,F,X,I,O) N V L $\rightarrow$ (:pi,F,X,sub I N V L,sub O N (sh V F 0) L)
+     (:fn,N,0,I,O) N V L $\rightarrow$ (:fn,N,0,sub I N V L,sub O N (sh V N 0) L+1)
+     (:fn,F,X,I,O) N V L $\rightarrow$ (:fn,F,X,sub I N V L,sub O N (sh V F 0) L)
+     (:app,F,A)    N V L $\rightarrow$ (:app,   sub F N V L,sub A N V L)
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} (Unit type, $1$).
-The unit $1$ is a type with one element.
-\begin{lstlisting}
-data unit = tt
-unitRec (C: U) (x: C): unit -> C = split tt -> x
-unitInd (C: unit -> U) (x: C tt): (z:unit) -> C z
-  = split tt -> x
+Нормалізація виконує підстановку при аплікаціях до функцій (бета-редукція)
+за допомогою рекурсивного спуску по конструкторам синтаксичного дерева.
+
+\begin{lstlisting}[mathescape=true]
+norm (:star,X)     $\rightarrow$ (:star,X)
+     (:var,X)      $\rightarrow$ (:var,X)
+     (:remote,N)   $\rightarrow$ cache (norm N [])
+     (:pi,N,0,I,O) $\rightarrow$ (:pi,N,0,norm I,norm O)
+     (:fn,N,0,I,O) $\rightarrow$ (:fn,N,0,norm I,norm O)
+     (:app,F,A)    $\rightarrow$ case norm F of
+                         (:fn,N,0,I,O) $\rightarrow$ norm (subst O N A)
+                                    NF $\rightarrow$ (:app,NF,norm A) end
 \end{lstlisting}
-\end{definition}
 
-\begin{theorem} (Category of Sets, $\mathbf{Set}$).
-Sets forms a Category.
-All compositional theorems proved by using reflection rule of internal language.
-The proof that $\mathrm{Hom}$ forms a set is taken through $\Pi$-contractability.
-\begin{lstlisting}
-Set: precategory = ((Ob,Hom),id,c,HomSet,L,R,Q) where
-  Ob: U = SET
-  Hom (A B: Ob): U = A.1 -> B.1
-  id (A: Ob): Hom A A = idfun A.1
-  c (A B C: Ob) (f: Hom A B) (g: Hom B C): Hom A C
-    = o A.1 B.1 C.1 g f
-  HomSet (A B: Ob): isSet (Hom A B) = setFun A.1 B.1 B.2
-  L (A B:Ob) (f:Hom A B): Path (Hom A B)(c A A B (id A)f)f
-    = refl (Hom A B) f
-  R (A B:Ob) (f:Hom A B): Path (Hom A B)(c A B B f(id B))f
-    = refl (Hom A B) f
-  Q (A B C D: Ob) (f:Hom A B) (g:Hom B C) (h:Hom C D)
-    : Path (Hom A D) (c A C D (c A B C f g) h)
-                     (c A B D f (c B C D g h))
-    = refl (Hom A D) (c A B D f (c B C D g h))
+Рівність за визначенням перевіряє рівність Erlang термів.
+
+\begin{lstlisting}[mathescape=true]
+  eq (:star,N)        (:star,N)        $\rightarrow$ true
+     (:var,N,I)       (:var,(N,I))     $\rightarrow$ true
+     (:remote,N)      (:remote,N)      $\rightarrow$ true
+     (:pi,N1,0,I1,O1) (:pi,N2,0,I2,O2) $\rightarrow$
+          let :true = eq I1 I2
+           in eq O1 (subst (shift O2 N1 0) N2 (:var,N1,0) 0)
+     (:fn,N1,0,I1,O1) (:fn,N2,0,I2,O2) $\rightarrow$
+          let :true = eq I1 I2
+           in eq O1 (subst (shift O2 N1 0) N2 (:var,N1,0) 0)
+     (:app,F1,A1)       (:app,F2,A2)   $\rightarrow$ let :true = eq F1 F2 in eq A1 A2
+     (A,B)                             $\rightarrow$ (:error,(:eq,A,B))
 \end{lstlisting}
-\end{theorem}
 
-Topos theory extends category theory with notion of topological
-structure but reformulated in a categorical way
-as a category of sheaves on a site or as one that has cartesian closure
-and subobject classifier. We give here two definitions.
+\subsection{Використання мови}
+Тут буде показано використання мови PTS.
 
-\subsection{Топологічна структура}
-
-\begin{definition} (Topology). The topological structure on $\mathrm{A}$
-(or topology) is a subset $S \in \mathrm{A}$ with following properties:
-i) any finite union of subsets of $\mathrm{S}$ is belong to $\mathrm{S}$;
-ii) any finite intersection of subsets of $\mathrm{S}$ is belong to $\mathrm{S}$.
-Subets of $\mathrm{S}$ are called open sets of family $\mathrm{S}$.
 \begin{lstlisting}
-Structure topology (A : Type) := {
-          open :> (A -> Prop) -> Prop;
-          empty_open: open (empty _);
-          full_open:  open (full _);
-          inter_open: forall u,
-                      open u -> forall v, open v
-                             -> open (inter A u v) ;
-          union_open: forall s, (subset _ s open)
-                             -> open (union A s) }.
+$ ./om help me
+[{a,[expr],"to parse. Returns {_,_} or {error,_}."},
+ {type,[term],"typechecks and returns type."},
+ {erase,[term],"to untyped term. Returns {_,_}."},
+ {norm,[term],"normalize term. Returns term's normal form."},
+ {file,[name],"load file as binary."},
+ {str,[binary],"lexical tokenizer."},
+ {parse,[tokens],"parse given tokens into {_,_} term."},
+ {fst,[{x,y}],"returns first element of a pair."},
+ {snd,[{x,y}],"returns second element of a pair."},
+ {debug,[bool],"enable/disable debug output."},
+ {mode,[name],"select metaverse folder."},
+ {modes,[],"list all metaverses."}]
+
+$ ./om print fst erase norm a "#List/Cons"
+   \ Head
+-> \ Tail
+-> \ Cons
+-> \ Nil
+-> Cons Head (Tail Cons Nil)
+ok
 \end{lstlisting}
-For fully functional general topology theorems and Zorn lemma you can refer to
-the Coq library \footnote{https://github.com/verimath/topology}{topology} by Daniel Schepler.
-\end{definition}
 
-\subsection{Топос Гротендіка}
+\subsection{Обмеження}
 
-Grothendieck Topology is a calculus of coverings which generalizes the algebra
-of open covers of a topological space, and can exist on much more general categories.
-There are three variants of Grothendieck topology definition:
-i) sieves; ii) coverage; iii) covering families.
-A category have one of these three is called a Grothendieck site.
+Обмеження:
+1) неможливість визначити рекурсію та індукцію без fixpoint аксіоми;
+2) кодування Бома повинно бути позитивно-рекурсивним;
+3) неможливість побудови великого елімінатора, вивести тип з даних;
+4) неефективність сім'ї лямбда кодувань вцілому (Парігот, Скотт, Бом).
 
-{\bf Examples}: Zariski, flat, étale, Nisnevich topologies.
+\subsection{Екстракти}
 
-A sheaf is a presheaf (functor from opposite category to category of sets) which
-satisties patching conditions arising from Grothendieck topology, and applying
-the associated sheaf functor to preashef forces compliance with these conditions.
+Мова Ом передбачає автоматичну генерацію сертифікованих програм в цільові платформи.
+Сертифікая полягаю у візуальному доведенню одніє стрілки ізоморфізма
+$\lambda$-функції в залежній теорії типів та $\lambda$-фунції в нетипизованому лямбда численні.
 
-The notion of Grothendieck topos is a geometric flavour of topos theory,
-where topos is defined as category of sheaves on a Grothendieck site with
-geometric moriphisms as adjoint pairs of functors between topoi, that
-satisfy exactness properties. \cite{Jardine15}
+\begin{lstlisting}[mathescape=true]
+ext (:var,X,N,F)      $\rightarrow$ (:var,X)
+    (:app,A,B,N,F)    $\rightarrow$ (:call,N,ext(F,A,N),[ext(F,B,N)])
+    (:fn,S,_,I,O,N,F) $\rightarrow$ (:fun,N,(:clauses,[{:clause,N,
+                                [(:var,N,S)],[],[ext(F,O,N)]}]))
+                    _ $\rightarrow$ []
+\end{lstlisting}
 
-As this flavour of topos theory uses category of sets as a prerequisite,
-the formal construction of set topos is cricual in doing sheaf topos theory.
+Так працює функція екстракту в Erlang з системи типів PTS$^\infty$.
+Erlang-версія Ом повинна бути зручна для використання для
+віртуальних машин LING та BEAM. Оскільки цей екстракт генерує
+AST дерево Erlang (подідбно до Elixir), результуючий код
+подається повністью на весь стек оптимізаційного компілятора
+Erlang. включаючи Erlang Core, тому весь модуль екстракта займає 30 рядків.
 
-\begin{definition} (Sieves).
-Sieves are a family of subfunctors
-$$\def\mapright#1{\xrightarrow{{#1}}}
-  \def\mapdown#1{\Big\downarrow\rlap{\raise2pt{\scriptstyle{#1}}}}
-  \def\mapdiagl#1{\vcenter{\searrow}\rlap{\raise2pt{\scriptstyle{#1}}}}
-  \def\mapdiagr#1{\vcenter{\swarrow}\rlap{\raise2pt{\scriptstyle{#1}}}}
-  R \subset Hom_C(\under,U), U \in \mathrm{C},
-$$
-such that following axioms hold: i) (base change) If $R \subset Hom_C(\under,U)$ is covering
-and $\phi : V \rightarrow U$ is a morphism of $\mathrm{C}$, then the subfuntor
-$$
-   \phi^{-1}(R) = \{ \gamma : W \rightarrow V \| \phi \cdot \gamma \in R \}
-$$
-is covering for $V$; ii) (local character) Suppose that $R,R' \subset Hom_C(\under,U)$ are
-subfunctors and R is covering. If $\phi^{-1}(R')$ is covering for
-all $\phi : V \rightarrow U$ in $R$, then $R'$ is covering; iii)
-$Hom_C(\under,U)$ is covering for all $U \in \mathrm{C}$.
-\end{definition}
+\subsubsection{Інтерпретатори}
+З практичної точки зору мова Ом є способом використання залежних типів
+та специфікації, побудовані за їх допомоги на мові Erlang.
+Завдяки глибокій інтеграції з Erlang вдалося мімізувати імплементацію системи до 300 рядків.
+Екстракт в інтерпретатор $O_{PTS}$ (чи інші) є альтернативною опцією для Ом.
+Також, мова Ом може бути легко портована на інші мови.
 
-\begin{definition} (Coverage).
-A coverage is a function assigning
-to each $\mathrm{Ob}_C$ the family of morphisms $\{f_i : U_i \rightarrow U \}_{i\in I}$ called
-covering families, such that for any $g: V \rightarrow U$ exist
-a covering family $\{h:V_j \rightarrow V\}_{j \in J}$ such that
-each composite $h_j \circ g$ factors some $f_i$:
-\begin{tikzcd}
- & V_j \arrow[r, "k"] \arrow[d, "h"]
- & U_i \arrow[d, "f_i"] \\
- & V \arrow[r, "g"] & U
-\end{tikzcd}
+\subsubsection{LLVM}
+Більш складна опція генерації сертифікованих програм --- це генерація машинного коду,
+з використанням або без використання допоміжних проміжних мов таких як LLVM та MIR.
+Тому що для цього потрібно верифікувати модель асемблера та процесора а також
+його оптимізатора, так як зі складністю синтаксичного дерева росте складність
+та велична терму-доведення будь-яких властивостей.
+
+\subsubsection{FPGA}
+Інша, не менш складна, або ще більш складна опція є безпосередня генерація
+VHDL моделей (наприклад, clash).
+
+\section{Система індуктивних типів ITS}
+Індуктивні синтаксиси та кодування можуть підтримуватися за допомогою системи модулів.
+Кожна система модулів може самостійно (у вигляді ефектів), або за допомогою лямбда кодувань
+попередньої мови PTS рівня, зберігати та оперувати індуктивними типами даних.
+
+\subsection{Синтаксис}
+
+\begin{lstlisting}[mathescape=true]
+def := data id tele = sum + id tele : exp = exp +
+       id tele : exp where def
+exp := cotele*exp + cotele $\rightarrow$ exp + exp $\rightarrow$ exp + (exp) + app + id +
+       (exp,exp) + \ cotele $\rightarrow$ exp + split cobrs + exp .1 + exp .2
+
+  0 := #empty         imp    := [ import id ]
+brs := 0 + cobrs      tele   := 0 + cotele
+app := exp exp        cotele := ( exp : exp ) tele
+ id := [ #nat ]       sum    := 0 + id tele + id tele | sum
+ids := [ id ]         br     := ids $\rightarrow$ exp
+cod := def dec        mod    := module id where imp def
+dec := 0 + codec      cobrs  := | br brs
+\end{lstlisting}
+
+Індуктивні синтаксиси будуються на телескопах Диб'єра,
+конструкторах сум, та їх елімінаторах.
+
 \begin{lstlisting}
-Co (C: precategory) (cod: carrier C) : U
-  = (dom: carrier C)
-  * (hom C dom cod)
-
-Delta (C: precategory) (d: carrier C) : U
-  = (index: U)
-  * (index -> Co C d)
-
-Coverage (C: precategory): U
-  = (cod: carrier C)
-  * (fam: Delta C cod)
-  * (coverings: carrier C -> Delta C cod -> U)
-  * (coverings cod fam)
+data tele   (A: U) = emp | tel (n: name) (b: A) (t: tele A)
+data branch (A: U) =        br (n: name) (args: list name) (term: A)
+data label  (A: U) =       lab (n: name) (t: tele A)
+                         | com (n: name) (t: tele A) (dim: list name)
+                               (s: list (prod (prod name bool) A))
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} (Grothendieck Topology).
-Suppose category $\mathrm{C}$ has all pullbacks.
-Since $\mathrm{C}$ is small, a pretopology on $\mathrm{C}$ consists of families of sets of
-morphisms
-$$
-    \{ \phi_\alpha : U_\alpha \rightarrow U \}, U \in \mathrm{C},
-$$
-called covering families, such that following axioms hold:
-i) suppose that $\phi_\alpha : U_\alpha \rightarrow U$ is a covering family
-and that $\psi : V \rightarrow U$ is a morphism of $\mathrm{C}$.
-Then the collection $V \times_U U_\alpha \rightarrow V$ is a cvering family for $V$.
-ii) If $\{\phi_\alpha : U_\alpha \rightarrow U \}$ is covering,
-and $\{\gamma_{\alpha,\beta} : W_{\alpha,\beta} \rightarrow U_\alpha \}$
-is covering for all $\alpha$, then the family of composites
-$$
-    W_{\alpha,\beta} \mapright{\gamma_{\alpha,\beta}} U_\alpha \mapright{\phi_\alpha} U
-$$
-is covering; iii) The family $\{1: U \rightarrow U\}$ is covering for all $U \in \mathrm{C}$.
-\end{definition}
-
-\begin{definition} (Site).
-Site is a category having either a coverage, grothendieck topology, or sieves.
 \begin{lstlisting}
-site (C: precategory): U
-  = (C: precategory) * Coverage C
+data ind (lang: U)
+   = datum  (n: name) (t: tele lang) (labels:   list (label lang))
+   | case   (n: name) (t: lang)      (branches: list (branch lang))
+   | ctor   (n: name)                (args:     list lang)
 \end{lstlisting}
-\end{definition}
 
-\begin{definition} (Presheaf).
-Presheaf of a category $\mathrm{C}$ is a functor from opposite category to category of sets:
-$\mathrm{C}^{op} \rightarrow \mathrm{Set}$.
-\begin{lstlisting}
-presheaf (C: precategory): U
-  = catfunctor (opCat C) Set
-\end{lstlisting}
-\end{definition}
+\subsection{Поліноміальні функтори}
 
-\begin{definition} (Presheaf Category, {\bf PSh}).
-Presheaf category {\bf PSh} for a site $\mathrm{C}$ is category
-were objects are presheaves and morphisms are natural transformations
-of presheaf functors.
-\end{definition}
+Існує два види формальної рекурсії: 1) перша з найменшою нерухомою точкою
+(як $F_A(X) = 1 + A \times X$ або $F_A(X) = A + X \times X$), іншими словами
+рекурсія з базою (термінується $1$ або $A$). Списки та дерева є
+прикладами таких рекурсивних структур з nil та leaf термінальними
+конструкторами (або рекурсивні суми).
+2) друга з найбільшою нерухомою точкою, або рекурсія без бази
+(як $F_A(X) = A \times X$) --- така рекурсія не термінована на рівні типів,
+та моделює нетерміновані послідовності, процеси тощо (або рекурсивні добутки).
+Кодування найменшою нерухомою точкою ще називається кодуванням
+добре-визначиними деревами або кодування поліноміальними функторами.
 
-\begin{definition} (Sheaf). Sheaf is a presheaf on a site. In other words
-a presheaf $F : \mathrm{C}^{op} \rightarrow \mathbf{Set}$ such that the
-cannonical map of inverse limit
-$$
-    F(U) \rightarrow \lim^{\leftarrow}_{V \to U \in R}{F(V)}
-$$
-is an isomorphism for each covering sieve $R \subset Hom_C(\_,U)$.
-Equivalently, all induced functions
-$$
-    Hom_C(Hom_C(\_,U),F) \rightarrow Hom_C(R,F)
-$$
-should be bejections.
-\begin{lstlisting}
-sheaf (C: precategory): U
-  = (S: site C)
-  * presheaf S.1
-\end{lstlisting}
-\end{definition}
+\noindent Натуральні числа: $\mu\ X \rightarrow 1 + X$\\
+Списки елементів A: $\mu\ X \rightarrow 1 + A \times X$\\
+Лямбда числення: $\mu\ X \rightarrow 1 + X \times X + X$\\
+Потоки: $\nu\ X \rightarrow A \times X$\\
+Потенційно нескінченний список елементів A: $\nu\ X \rightarrow 1 + A \times X$\\
+Кінцеве дерево: $\mu\ X \rightarrow \mu\ Y \rightarrow 1 + X \times Y = \mu\ X = List\ X$\\
 
-\begin{definition} (Sheaf Category, {\bf Sh}).
-Sheaf category {\bf Sh}
-is a category where objects are sheaves and morphisms are
-natural transformation of sheves. Sheaf category is a full subcategory
-of category of presheaves {\bf PSh}.
-\end{definition}
+Для цих кодувань існує аналог кодування Чорча, який розповсюджує
+кодування чистими функціями з нетипизованого лямбда числення до $\Pi$-типу.
+Таке кодування називається кодуванням Бома-Беррардуччі, а просто кодування Бома.
+Воно дозволяє кодувати індуктивні типи даних $\Pi$-типами чистими функціями.
+Проте як було показано Жеверсом\cite{Geuvers01} неможливо побудувати принцип
+індукції в чистих системх без використання в явному чи прихованому
+вигляді \lstinline{Fixpoint} аксіоми. Також неможливо побудувати
+J елімінатор Id типу закодованого в Бом кодуванні, а також
+елімінатори гомотопічних примітивів, наприклад елімінатори гомотопічного
+візрізка як \lstinline{funExt}, \lstinline{homotopy}.
 
-\begin{definition} (Grothendieck Topos).
-Topos is the category of sheaves {\bf Sh}$(C,J)$ on a site $\mathrm{C}$ with topology $J$.
-\end{definition}
-
-\begin{theorem} (Giraud).
-A category $\mathrm{C}$ is a Grothiendieck topos iff it has following properties:
-i) has all finite limits;
-ii) has small disjoint coproducts stable under pullbacks;
-iii) any epimorphism is coequalizer;
-iv) any equivalence relation $R \rightarrow E$ is a kernel pair and has a quotient;
-v) any coequalizer $R \rightarrow E \rightarrow Q$ is stably exact;
-vi) there is a set of objects that generates $\mathrm{C}$.
-\end{theorem}
-
-\begin{definition} (Geometric Morphism). Suppose that $\mathrm{C}$ and $\mathrm{D}$
-are Grothendieck sites. A geometric morphism
-$$
-    f : {\bf Sh}(C) \rightarrow {\bf Sh}(D)
-$$
-consist of functors $f_* : {\bf Sh}(C) \rightarrow {\bf Sh}(D)$ and
-$f^* : {\bf Sh}(D) \rightarrow {\bf Sh}(C)$ such that $f^*$ is
-left adjoint to $f_*$ and $f^*$ preserves finite limits. The left adjoint $f^*$ is called
-the inverse image functor, while $f_*$ is called the direct image. The inverse image functor
-$f^*$ is left and right exact in the sense that it preserves all finite
-colimits and limits, respectively.
-\end{definition}
-
-\begin{definition} (Cohesive Topos). A topos $E$ is a cohesive topos over a base topos $S$,
-if there is a geometric morphism $(p^*,p_*): E \rightarrow S$, such that:
-i) exists adjunction $p^! \vdash p_*$ and $ p^! \dashv p_*$;
-ii) $p^*$ and $p^!$ are full faithful; iii) $p_!$ preserves finite products.
-This quadruple defines adjoint triple:
-$$
-\int \dashv \fl \dashv \sharp
-$$
-\end{definition}
-
-\subsection{Елементарний топос}
-
-Giraud theorem was a synonymical topos definition involved only topos
-properties but not a site properties. That was step forward on
-predicative definition. The other step was made by Lawvere and Tierney,
-by removing explicit dependance on categorical model of set
-theory (as category of set is used in definition of presheaf). This information
-was hidden into subobject classifier which was well defined through
-categorical pullback and property of being cartesian
-closed (having lambda calculus as internal language).
-
-Elementary topos doesn't involve 2-categorical modeling, so we can construct
-set topos without using functors and natural transformations
-(what we need in geometrical topos theory flavour). This flavour of topos
-theory more suited for logic needs rather that geometry, as its set properties
-are hidden under the predicative predicative pullback definition of subobject classifier
-rather that functorial notation of presheaf functor. So we can simplify proofs
-at the homotopy levels, not to lift everything to 2-categorical model.
-
-\begin{definition} (Monomorphism).
-An morphism $f : Y \rightarrow Z $ is a monic or mono
-if for any object $X$ and every pair of parralel morphisms $g_1,g_2: X \rightarrow Y$ the
-$$
-    f \circ g_1 = f \circ g_2 \rightarrow g_1 = g_2.
-$$
-More abstractly, f is mono if for any $X$ the $\mathrm{Hom}(X,\_)$ takes it to an injective
-function between hom sets $\mathrm{Hom}(X,Y) \rightarrow \mathrm{Hom}(X,Z)$.
-\begin{lstlisting}
-mono (P: precategory) (Y Z: carrier P) (f: hom P Y Z): U
-   = (X: carrier P) (g1 g2: hom P X Y)
-  -> Path (hom P X Z) (compose P X Y Z g1 f)
-                      (compose P X Y Z g2 f)
-  -> Path (hom P X Y) g1 g2
-\end{lstlisting}
-\end{definition}
-
-\begin{definition} (Subobject Classifier\cite{Johnstone14}).
-In category $\mathrm{C}$ with finite limits,
-a subobject classifier is a monomorphism $true: 1 \rightarrow \Omega$ out of terminal
-object $\mathrm{1}$, such that for any mono $U \rightarrow X$ there is a unique
-morphism $\chi_U : X \rightarrow \Omega$ and pullback diagram:
-\begin{tikzcd}
- & U \arrow[r, "k"] \arrow[d, ""]
- & 1 \arrow[d, "true"] \\
- & X \Omega \arrow[r, "\chi_U"] & \Omega
-\end{tikzcd}
-\begin{lstlisting}
-subobjectClassifier (C: precategory): U
-  = (omega: carrier C)
-  * (end: terminal C)
-  * (trueHom: hom C end.1 omega)
-  * (chi: (V X: carrier C) (j: hom C V X) -> hom C X omega)
-  * (square: (V X: carrier C) (j: hom C V X) -> mono C V X j
-    -> hasPullback C (omega,(end.1,trueHom),(X,chi V X j)))
-  * ((V X: carrier C) (j: hom C V X) (k: hom C X omega)
-    -> mono C V X j
-    -> hasPullback C (omega,(end.1,trueHom),(X,k))
-    -> Path (hom C X omega) (chi V X j) k)
-\end{lstlisting}
-\end{definition}
-
-\begin{theorem} (Category of Sets has Subobject Classifier).
-\end{theorem}
-
-\begin{definition} (Cartesian Closed Categories).
-The category $\mathrm{C}$ is called cartesian closed if exists all:
-i) terminals; ii) products; iii) exponentials. Note that this definition
-lacks beta and eta rules which could be found in embedding $\mathbf{MLTT}$.
-\begin{lstlisting}
-isCCC (C: precategory): U
-  = (Exp:   (A B: carrier C) -> carrier C)
-  * (Prod:  (A B: carrier C) -> carrier C)
-  * (Apply: (A B: carrier C) -> hom C (Prod (Exp A B) A) B)
-  * (P1:    (A B: carrier C) -> hom C (Prod A B) A)
-  * (P2:    (A B: carrier C) -> hom C (Prod A B) B)
-  * (Term:  terminal C)
-  * unit
-\end{lstlisting}
-\end{definition}
-
-\begin{theorem} (Category of Sets is cartesian closed).
-As you can see from exp and pro we internalize $\Pi$ and $\Sigma$ types as $\mathrm{SET}$ instances,
-the $\mathrm{isSet}$ predicates are provided with contractability.
-Exitense of terminals is proved by $\mathrm{propPi}$. The same technique you
-can find in $\mathbf{MLTT}$ embedding.
-\begin{lstlisting}
-cartesianClosure : isCCC Set
-  = (expo,prod,appli,proj1,proj2,term,tt) where
-    exp (A B: SET): SET = (A.1   -> B.1, setFun A.1 B.1 B.2)
-    pro (A B: SET): SET = (prod A.1 B.1, setSig A.1 (\(_ : A.1)
-                          -> B.1) A.2 (\(_ : A.1) -> B.2))
-    expo:  (A B: SET) -> SET = \(A B: SET) -> exp A B
-    prod:  (A B: SET) -> SET = \(A B: SET) -> pro A B
-    appli: (A B: SET) -> hom Set (pro (exp A B) A) B
-        = \(A B: SET) -> \(x:(pro(exp A B)A).1)-> x.1 x.2
-    proj1: (A B: SET) -> hom Set (pro A B) A
-        = \(A B: SET) (x: (pro A B).1) -> x.1
-    proj2: (A B: SET) -> hom Set (pro A B) B
-        = \(A B: SET) (x: (pro A B).1) -> x.2
-    unitContr (x: SET) (f: x.1 -> unit) : isContr (x.1 -> unit)
-      = (f, \(z: x.1 -> unit) -> propPi x.1 (\(_:x.1)->unit)
-           (\(x:x.1) -> propUnit) f z)
-    term: terminal Set = ((unit,setUnit),
-           \(x: SET) -> unitContr x (\(z: x.1) -> tt))
-\end{lstlisting}
-Note that rules of cartesian closure forms a type theoretical langage
-called lambda calculus.
-\end{theorem}
-
-\begin{definition} (Elementary Topos).
-Topos is a precategory which is cartesian closed and has subobject classifier.
-\begin{lstlisting}
-Topos (cat: precategory) : U
-  = (cartesianClosure: isCCC cat)
-  * subobjectClassifier cat
-\end{lstlisting}
-\end{definition}
-
-\begin{theorem} (Topos Definitions).
-Any Grothendieck topos is an elementary topos too.
-The proof is sligthly based on results of Giraud theorem.
-\end{theorem}
-
-\begin{theorem} (Category of Sets forms a Topos).
-There is a cartesian closure and subobject classifier for a categoty of sets.
-\begin{lstlisting}
-internal : Topos Set
-         = (cartesianClosure,hasSubobject)
-\end{lstlisting}
-\end{theorem}
-
-\begin{theorem} (Freyd). Main theorem of topos theory\cite{Goldblatt14}.
-For any topos $C$ and any $b : \mathrm{Ob}_C$ relative category $C\downarrow b$ is also a topos.
-And for any arrow $f: a \rightarrow b$ inverse image functor $f^*: C\downarrow b \rightarrow c\downarrow a$
-has left adjoint $\sum_f$ and right adjoin $\prod_f$.
-\end{theorem}
-
-\subsection{Висновки}
-
-We gave here constructive definition of topology as finite unions and
-intersections of open subsets. Then make this definition categorically
-compatible by introducing Grothendieck topology in three different forms: sieves, coverage,
-and covering families. Then we defined an elementary topos and introduce category of sets,
-and proved that {\bf Set} is cartesian closed, has object classifier and thus a topos.
-
-This intro could be considered as a formal introduction to topos theory (at least of the level of first chapter)
-and you may evolve this library to your needs or ask to help porting or developing your application
-of topos theory to a particular formal construction.
-
-\section{Алгебраїчна топологія}
-\subsection{Теорія груп}
-\subsection{Простори}
-\subsubsection{Cімпліціальні}
-\subsubsection{CW-комплекси}
-
-The definition of homotopy groups, a special role is played
-by the inclusions $S^{n-1} \incmap D^n$. We study spaces
-obtained iterated attachments of $D^n$ along $S^{n-1}$.
-
-\begin{definition} (Attachment).
-Attaching n-cell to a space $X$
-along a map $f : S^{n-1} \rightarrow X$ means taking a pushout figure.
-$$
-\begin{tikzcd}
- & S^{n-1} \arrow[r, "k"] \arrow[d, ""]
- & X \arrow[d, ""] \\
- & D^n \arrow[r, "g"] & \cup_f D^n
-\end{tikzcd}
-$$
-where the notation $X \cup_f D^n$ means result depends
-on homotopy class of $f$.
-\end{definition}
-
-\begin{definition} (CW-Complex).
-Inductively. The only CW-complex of dimention $-1$ is $\varnothing$.
-A CW-complex of dimension $\leqslant n$ on $X$ is a
-space $X$ obtained by attaching a collection of n-cells
-to a CW-complex of dimension $n-1$.
-
-A CW-complex is a space $X$ which is the $colimit(X_i)$ of a
-sequence $X_{-1} = \varnothing \incmap X_0 \incmap X_1 \incmap X_2 \incmap ... X$ of
-CW-complexes $X_i$ of dimension $\leqslant n$, with $X_{i+1}$
-obtained from $X_i$ by i-cell attachments.
-Thus if X is a CW-complex, it comes with a filtration
-$$
-    \varnothing \incmap X_0 \incmap X_1 \incmap X_2 \incmap ... X
-$$
-where $X_i$ is a CW-complex of dimension $\leqslant i$ called
-the i-skeleton, and hence the filtration is called the skeletal
-filtration.
-\end{definition}
-
-\subsection{Теорія гомотопій}
-
-\subsubsection{Простори петель}
-
-\begin{definition} (Pointed Space). A pointed type $(A,a)$ is a type $A:U$
-together with a point $a:A$, called its basepoint.
-\begin{lstlisting}
-pointed: U = (A: U) * A
-point (A: pointed): A.1 = A.2
-space (A: pointed): U = A.1
-\end{lstlisting}
-\end{definition}
-
-\begin{definition} (Loop Space).
-$$\Omega(A,a) =_{def} ((a =_A a), refl_A(a)).$$
-\begin{lstlisting}
-omega1 (A: pointed) : pointed
-  = (Path (space A) (point A) (point A), refl A.1 (point A))
-\end{lstlisting}
-\end{definition}
-
-\begin{definition} (n-Loop Space).
+\subsection{Кодування Бома}
+Тип даних List над даним типом А, може бути представлений як ініціальні алгебра
+$(\mu L_A, in)$ функтору $L_A(X) = 1 + (A \times X)$. Позначається $\mu L_A = List(A)$.
+Функції-конструктори $nil: 1 \rightarrow List(A)$ та
+$cons: A \times List(A) \rightarrow List(A)$ визначені як
+$nil = in \circ inl$ та $cons = in \circ inr$, таким чином $in = [nil,cons]$.
+Для кожних двох функцій $c: 1 \rightarrow C$ та $h: A \times C \rightarrow C$,
+катаморфізм $f = \llparenthesis [c,h] \rrparenthesis : List(A) \rightarrow C$
+є унікальним розв'язком системи рівнянь:
 $$
 \begin{cases}
-\Omega^0(A, a) =_{def} (A, a)\\
-\Omega^{n+1}(A,a) =_{def} \Omega^{n}(\Omega(A,a))\\
+  f \circ nil  = c \\
+  f \circ cons = h \circ (id \times f)
 \end{cases}
 $$
-\begin{lstlisting}
-omega : nat -> pointed -> pointed = split
-  zero -> idfun pointed
-  succ n -> \(A: pointed) -> omega n (omega1 A)
-\end{lstlisting}
-\end{definition}
-
-\subsubsection{Обчислення гомотопічних груп}
-
-\begin{definition} (n-th Homotopy Group of m-Sphere).
-$$\pi_{n}S^{m} = ||\Omega^{n}(S^{m})||_0.$$
-\begin{lstlisting}
-piS (n: nat): (m: nat) -> U = split
-   zero   -> sTrunc (space (omega n (bool,false)))
-   succ x -> sTrunc (space (omega n (Sn (succ x),north)))
-\end{lstlisting}
-\end{definition}
-
-\begin{theorem} ($\Omega(S^1)=\mathbb{Z}$).
-\begin{lstlisting}
-data S1 = base
-        | loop <i> [ (i=0) -> base ,
-                     (i=1) -> base ]
-
-loopS1 : U = Path S1 base base
-
-encode (x:S1) (p:Path S1 base x)
-  : helix x
-  = subst S1 helix base x p zeroZ
-
-decode : (x:S1) -> helix x -> Path S1 base x = split
-  base -> loopIt
-  loop @ i -> rem @ i where
-    p : Path U (Z -> loopS1) (Z -> loopS1)
-      = <j> helix (loop1@j) -> Path S1 base (loop1@j)
-    rem : PathP p loopIt loopIt
-      = corFib1 S1 helix (\(x:S1)->Path S1 base x) base
-        loopIt loopIt loop1 (\(n:Z) ->
-        comp (<i> Path loopS1 (oneTurn (loopIt n))
-             (loopIt (testIsoPath Z Z sucZ predZ
-                      sucpredZ predsucZ n @ i)))
-             (<i>(lem1It n)@-i) [])
-
-loopS1eqZ : Path U Z loopS1
-  = isoPath Z loopS1 (decode base) (encode base)
-    sectionZ retractZ
-\end{lstlisting}
-\end{theorem}
-
-\subsubsection{Розшарування Хопфа}
-
-This article defines the Hopf Fibration (HF), the concept
-of splitting the $S^3$ sphere onto the twisted cartesian product
-of spheres $S^1$ and $S^2$.
-Basic HF applications are:
-1) HF is a Fiber Bundle structure of Dirac Monopole;
-2) HF is a map from the $S^3$ in H to the Bloch sphere;
-3) If HF is a vector field in $R^3$ then there exists a solution
-to compressible non-viscous Navier-Stokes equations.
-It was figured out that there are only
-4 dimensions of fibers with Hopf invariant 1, namely
-$S^0$, $S^1$, $S^3$, $S^7$.
-
-This article consists of two parts:
-1) geometric visualization of projection of $S^3$ to $S^2$ (frontend);
-2) formal topological version of HF in cubical type theory (backend).
-Consider this a basic intro and a summary of results or companion
-guide to the chapter 8.5 from HoTT.
-
-\subsubsection*{Геометрична інтерпретація}
-
-Let's imagine $S^3$ as smooth differentiable manifold and build
-a projection onto the display as if demoscene is still alive.
-
-\begin{definition} (Sphere $S^3$).
-Like a little baby in $\mathbb{R}^4$:
-$$
-S^3 = \{ (x_0,x_1,x_2,x_3) \in \mathbb{R}^4 : \sum_{i=0}^3 x_i^2 = 1 \};
-$$
-\end{definition}
-
-after math classes in quaternions $\mathbb{H}$:
-
-$$
-S^3 = \{ x \in \mathbb{H} : \|x\| = 1 \}.
-$$
-
-\begin{definition} (Locus).
-The $S^3$ is realized as a disjoint
-union of circular fibers in Hopf coordinates $(\eta,\theta_1,\theta_2)$:
+де $f = foldr(c,h)$. Маючи це, ініціальна алгебра представлена функтором
+$\mu (1 + A \times X)$ та сумою морфізмів
+$[1 \rightarrow List(A), A \times List(A) \rightarrow List(A)]$
+як катаморфізму. Використовуючи це кодування, List-тип в базовій бібліотеці мови $O_{PTS}$
+буде мати наступну форму:
 $$
 \begin{cases}
-x_0 = cos(\theta_1)sin(\eta), \\
-x_1 = sin(\theta_1)sin(\eta), \\
-x_2 = cos(\theta_2)cos(\eta), \\
-x_3 = sin(\theta_2)cos(\eta). \\
+ foldr = \llparenthesis [ f \circ nil , h] \rrparenthesis, f \circ cons = h \circ (id \times f)\\
+ len = \llparenthesis [ zero, \lambda\ a\ n \rightarrow succ\ n ] \rrparenthesis \\
+ (++) = \lambda\ xs\ ys \rightarrow \llparenthesis [ \lambda (x) \rightarrow ys, cons ] \rrparenthesis (xs) \\
+ map = \lambda\ f \rightarrow \llparenthesis [ nil, cons \circ (f \times id)] \rrparenthesis
 \end{cases}
 $$
-Where $\eta \in [0,\frac{\pi}{2}]$ and $\theta_{1,2} \in [0,2\pi]$.
-\end{definition}
-
-\begin{definition} (Mapping on $S^2$).
-A mapping of the Locus to the $S^2$ has points on the circles
-parametrized by $\theta_2$:
-$$
-\begin{cases}
-x = sin(2\eta)cos(\theta_1), \\
-y = sin(2\eta)sin(\theta_1), \\
-z = cos(2\eta).
-\end{cases}
-$$
-\begin{figure}
-  \centerline{\includegraphics[scale=0.4]{hopf-2.jpeg}}
-  \caption{Розшарування Хопфа}
-\end{figure}
-\begin{lstlisting}
-var fiber = new THREE.Curve(),
-    color = sphericalCoords.color;
-
-fiber.getPoint = function(t) {
-    var eta = sphericalCoords.eta,
-        phi = sphericalCoords.phi,
-        theta = 2 * Math.PI * t;
-    var x1 = Math.cos(phi+theta) * Math.sin(eta/2),
-        x2 = Math.sin(phi+theta) * Math.sin(eta/2),
-        x3 = Math.cos(phi-theta) * Math.cos(eta/2),
-        x4 = Math.sin(phi-theta) * Math.cos(eta/2);
-    var m = mag([x1,x2,x3]),
-        r = Math.sqrt((1-x4)/(1+x4));
-        return new THREE.Vector3(r*x1/m,r*x2/m, r*x3/m);
-    };
+\begin{lstlisting}[mathescape=true]
+data list (A: U) = cons (x: A) (cs: list A) | nil
 \end{lstlisting}
-\end{definition}
-
-\subsubsection*{Гомотопічна інтерпретація}
-Can we reason about spheres without a metric? Yes!
-But can we do this in a constructive way? Also yes.
-
-\subsubsection{Розшарування Хопфа}
-\begin{example} ($S^3$ Hopf Fiber).
-Вперше розшарування Хопфа трьовимірної сфери було формалізовано Джильямом Брунері.
-Тут дається його модифікована версія.
-\begin{lstlisting}
-rot: (x : S1) -> Path S1 x x = split
-    base -> loop1
-    loop @ i -> constSquare S1 base loop1 @ i
-
-mu : S1 -> equiv S1 S1 = split
-    base -> idEquiv S1
-    loop @ i -> equivPath S1 S1 (idEquiv S1)
-                (idEquiv S1) (<j> \(x : S1) -> rot x @ j) @ i
-
-H : S2 -> U = split
-    north -> S1
-    south -> S1
-    merid x @ i -> ua S1 S1 (mu x) @ i
-
-total : U = (c : S2) * H c
+$$
+\begin{cases}
+list = \lambda\ ctor \rightarrow \lambda\ cons \rightarrow \lambda\ nil \rightarrow ctor\\
+cons = \lambda\ x\ \rightarrow \lambda\ xs \rightarrow \lambda\ list \rightarrow \lambda\ cons \rightarrow\ \lambda\ nil \rightarrow cons\ x\ (xs\ list\ cons\ nil)\\
+nil = \lambda\ list \rightarrow \lambda\ cons \rightarrow \lambda\ nil \rightarrow nil\\
+\end{cases}
+$$
+\begin{lstlisting}[mathescape=true]
+module list where
+    map (A B: U) (f: A -> B) : list A -> list B
+    length (A: U): list A -> nat
+    append (A: U): list A -> list A -> list A
+    foldl (A B: U) (f: B -> A -> B) (Z: B): list A -> B
+    filter (A: U) (p: A -> bool) : list A -> list A
 \end{lstlisting}
-\end{example}
-
-\begin{definition} (H-space).
-H-space over a carrier $A$ is a tuple
 $$
-H_A=
 \begin{cases}
-A : U\\
-e : A\\
-\mu : A \rightarrow A \rightarrow A\\
-\beta : (a:A) \rightarrow \Sigma (\mu(e,a)=a) (\mu(a,e)=a)
-\end{cases}
-$$.
-\end{definition}
-
-\begin{theorem} (Hopf Fibrations).
-There are fiber bundles: 
-$(S^0,S^1,p,S^1)$,
-$(S^1,S^3,p,S^2)$,
-$(S^3,S^7,p,S^4)$,
-$(S^7,S^{15},p,S^8)$.
-\end{theorem}
-
-\begin{definition} (Hopf Invariant).
-Let $\phi: S^{2n-1} \rightarrow S^{n}$ a continuous map.
-Then homotopy pushout (cofiber) of $\phi$ is
-$cofib(\phi) = S^{n} \bigcup_\phi \mathbb{D}^{2n}$ has
-ordinary cohomology
-$$
-H^{k}(cofib(\phi),\mathbb{Z})=
-\begin{cases}
-\mathbb{Z}\ for\ k=n,2n \\[2ex]
-0\ otherwise
+len = foldr\ (\lambda\ x\ n \rightarrow succ\ n)\ 0\\
+(++) = \lambda\ ys \rightarrow foldr\ cons\ ys\\
+map = \lambda\ f \rightarrow foldr\ (\lambda x\ xs \rightarrow cons\ (f\ x)\ xs)\ nil\\
+filter = \lambda\ p \rightarrow foldr\ (\lambda x\ xs \rightarrow if\ p\ x\ then\ cons\ x\ xs\ else\ xs)\ nil\\
+foldl = \lambda\ f\ v\ xs = foldr\ (\lambda\ xg\rightarrow\ (\lambda \rightarrow g\ (f\ a\ x)))\ id\ xs\ v\\
 \end{cases}
 $$
-\end{definition}
 
-Hence for $\alpha,\beta$ generators of the cohomology groups in
-degree $n$ and $2n$, respectively, there exists an integer $h(\phi)$
-that expresses the {\bf cup product} square of $\alpha$
-as a multiple of $\beta$ --- $\alpha\sqcup\alpha=h(\phi)\cdot\beta$.
-This integer $h(\phi)$ is called Hopf invariant of $\phi$.
+\section{Гомотопічна система типів HTS}
 
-\begin{theorem} (Adams, Atiyah).
-Hopf Fibrations are only maps that have Hopf invariant $1$.
-\end{theorem}
+\subsection{Синтаксис}
 
-\subsection{Теорія гомологій}
-\section{Диференціальна геометрія}
-\subsection{V-многовиди}
-\subsection{G-структури}
-\subsection{H-простори}
+\begin{lstlisting}[mathescape=true]
+   sys := [ sides ]          side := (id=0)$\rightarrow$exp+(id=1)$\rightarrow$exp
+  form := form\/f1+f1+f2    sides := #empty+cos+side
+   cos := side,side+side,cos  mod := $\textbf{module}$ id $\textbf{where}$ imps dec
+    f1 := f1/\f2               f2 := -f2+id+0+1
+   imp := $\textbf{import}$ id                 brs := #empty+cobrs
+   app := exp exp             tel := #empty+cotel
+  imps := #list imp         cotel := (exp:exp) tel
+    id := #list #nat          dec := #empty+codec
+    u2 := $\tetxbf{glue}$+$\tetxbf{unglue}$+$\tetxbf{Glue}$                   u1 := $\tetxbf{fill}$+$\tetxbf{comp}$
+   ids := #list id             br := ids$\rightarrow$exp+ids@ids$\rightarrow$exp
+ codec := def dec
+ cobrs := | br brs
+   sum := #empty+id tel+id tel|sum+id tel<ids>sys
+   def := $\tetxbf{data}$ id tel=sum+id tel:exp=exp+id tel:exp $\tetxbf{where}$ def
+   exp := cotel*exp+cotel$\rightarrow$exp+exp$\rightarrow$exp+(exp)+id
+          (exp,exp)+\cotele$\rightarrow$exp+$\tetxbf{split}$ cobrs+exp$\tetxbf{.1}$+exp$\tetxbf{.2}$+
+          $\langle$ids$\rangle$exp+exp@form+app+u2 exp exp sys+u1 exp sys
+\end{lstlisting}
 
+Тут термінали := (визначенния), + (сума типів), \#empty (пустий тип), \#nat (тип натуральних чисел),
+\#list (тип списків) --- є частинами BNF мови. Термінали
+$\rvert$, :, *, $\langle$, $\rangle$, (, ), =, $\backslash$, /, -, $\rightarrow$, 0, 1, @, [, ],
+$\mathbf{module}$, $\mathbf{import}$,
+$\mathbf{data}$, $\mathbf{split}$, $\mathbf{where}$, $\mathbf{comp}$, $\mathbf{fill}$,
+$\mathbf{Glue}$, $\mathbf{glue}$, $\mathbf{unglue}$,
+$\mathbf{.1}$, $\mathbf{.2}$,
+а також термінал $,$ є терміналами мови верифікатора гомотопічної системи типів.
+Ця мова включає в себе: індуктивні типи, вищі індуктивні типи, оператори склеювання
+для всесвітів та типів з відповідними елімінаторами. Усі ці концепції, та їх
+моделі більш формально та детально описані у наступному розділі 3.
+
+Система не повинна бути обмежена мовами та синтаксисами, ми покажемо як приклад,
+підтримку гомотопічної мови з інтервалом [0,1] сумісної з $cubical$ та з пітримкою індуктивних
+синтаксисів та кодувань попереднього рівня.
+
+\begin{lstlisting}[mathescape=true]
+data alg
+   = zero
+   | one
+   | max (a b: alg)
+   | min (a b: alg)
+
+data hts
+   = path (t a b: lang)
+   | plam (n: name) (a: alg) (b: lang)
+   | papp (f: name) (a: lang) (p: alg)
+   | comp_ (a b: lang)
+   | fill_ (a b c: lang)
+   | glue_ (a b c: lang)
+   | glue_elem (a b: lang)
+   | unglue_elem (a b: lang)
+\end{lstlisting}
+
+\section{Висновки}
+Як апогей, система HTS є фінальною категорією,
+куди сходяться всі стрілки категорії мов. Кожна мова та її категорія
+мають певний набір стрілок ендоморфізмів, які обчислюють, верифікують,
+нормалізують, оптимізують програми своїх мов.
+Стрілки виду $e_i: O_{n+1} \rightarrow O_n$ є екстракторами, які понижають систему типів,
+при чому $O_{CPS} = O_0$.
+
+Базова бібліотека мови Ерланг у яку проводиться основний
+естракт, поставляється з дистрибутивом Erlang/OTP. Базова бібліотека
+$O_{PTS}$ наведена в репозиторії Github\footnote{\url{https://github.com/groupoid/om}}.
+Гомотопічна базова бібліотека відповідає термінальній мові $O_{CCHM}$, та теж відкрита
+на Github\footnote{\url{https://github.com/groupoid/cubical}}.
+Останні два розділи присвячені математичному моделюванню математики на цій мові.
 
