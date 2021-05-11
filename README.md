@@ -1,5 +1,5 @@
-First Formal System
-===================
+Formal System One
+=================
 
 Render PDF
 ----------
