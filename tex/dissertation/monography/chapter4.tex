@@ -829,14 +829,14 @@ $$
    app := exp exp             tel := #empty+cotel
   imps := #list imp         cotel := (exp:exp) tel
     id := #list #nat          dec := #empty+codec
-    u2 := $\tetxbf{glue}$+$\tetxbf{unglue}$+$\tetxbf{Glue}$                   u1 := $\tetxbf{fill}$+$\tetxbf{comp}$
+    u2 := $\textbf{glue}$+$\textbf{unglue}$+$\textbf{Glue}$                   u1 := $\textbf{fill}$+$\textbf{comp}$
    ids := #list id             br := ids$\rightarrow$exp+ids@ids$\rightarrow$exp
  codec := def dec
  cobrs := | br brs
    sum := #empty+id tel+id tel|sum+id tel<ids>sys
-   def := $\tetxbf{data}$ id tel=sum+id tel:exp=exp+id tel:exp $\tetxbf{where}$ def
+   def := $\textbf{data}$ id tel=sum+id tel:exp=exp+id tel:exp $\textbf{where}$ def
    exp := cotel*exp+cotel$\rightarrow$exp+exp$\rightarrow$exp+(exp)+id
-          (exp,exp)+\cotele$\rightarrow$exp+$\tetxbf{split}$ cobrs+exp$\tetxbf{.1}$+exp$\tetxbf{.2}$+
+          (exp,exp)+\cotele$\rightarrow$exp+$\textbf{split}$ cobrs+exp$\textbf{.1}$+exp$\textbf{.2}$+
           $\langle$ids$\rangle$exp+exp@form+app+u2 exp exp sys+u1 exp sys
 \end{lstlisting}
 
