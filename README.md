@@ -6,6 +6,8 @@ Formal System One --- is a blueprint of set of formal languages for concurrent a
 Monography.PDF
 --------------
 
+https://phd.5ht.co/monography.pdf
+
 ```
 $ cp *.ttf ./local/share/fonts
 $ sudo apt install texlive-full
