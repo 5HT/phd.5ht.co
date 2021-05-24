@@ -1,4 +1,4 @@
-Formal System One
+FORMAL SYSTEM ONE
 =================
 
 Render PDF
