@@ -56,6 +56,65 @@
 трикутнику теорій, які відповідають ізоморфізму
 Каррі-Говарда-Ламбека (Логіки, Мови, Категорії).
 
+\subsection{Класифікація мов програмування}
+
+\begin{table}
+%\centering
+  \caption{Класифікація мов програмування}
+ \begin{tabular}{lcccc}
+    \hline
+       Код & Мови програмування  \\
+    \hline
+       HW & VHDL, Verilog, Clash, Chisel, SystemC, Lava, BSV \\
+    \hline
+       LEG & PDP-11, VAX, S/360, M68K,  \\
+           & PowerPC, MIPS, SPARC, Super-H \\
+    \hline
+       ASM & Intel, ARM, RISC-V \\
+    \hline
+       ALG & C, BCPL, ALGOL, SNOBOL, Simula, \\
+           & Pascal, Oberon, COBOL, PL/1 \\
+    \hline
+       ML & SML, Alice ML, OCaml, UrWeb, Flow, F# \\
+    \hline
+       PURE & HOPE, Miranda, Clean, Charity, Joy, Mercury, Elm, PureScript \\
+    \hline
+       F_\omega & Scala, Haskell, 1ML, Plutus \\
+    \hline
+       S-exp & LISP, Scheme, Clojure, Racket, Dylan, LFE, CL \\
+    \hline
+       MACR & Nemerle, Nim, Haxe, Perl, Elixir \\
+    \hline
+       OOI & Simula, Smalltalk, Self, REBOL, Io \\
+           & JS, Lua, Ruby, Python, PHP, Java, Kotlin \\
+    \hline
+       CMP & C++, Rust, D, Swift, Fortran \\
+    \hline
+       SHELL & PowerShell, TCL, SH, CLIPS, BASIC, FORTH \\
+    \hline
+       SVC & IDL, SOAP, ASN.1, GRPC \\
+    \hline
+       MARK & TeX, PS, XML, SVG, CSS, ROFF, OWL, SGML, RDF, SysML \\
+    \hline
+       LOGIC & AUT-68, ACL2, LEGO, ALF, Prolog \\
+             & CPL, Mizar, Dedukti, HOL, Isabelle, Z \\
+    \hline
+       \Pi\Sigma & Coq, F*, Lean, NuPRL, ATS, Epigram, \\
+          & Cayenne, Idris, Dhall, Cedile, Formality \\
+    \hline
+       HoTT & Menkar, Cubical, yacctt, redtt, RedPRL, Arend, Agda \\
+    \hline
+       CHKR & TLA+, Twelf, Promela, CSPM \\
+    \hline
+       PAR & Ling, Pony, Erlang, BPMN, Ada, E, Go, Occam, Oz \\
+    \hline
+       ARR & Julia, Wolfram, MATHLAB, Octave, Futhark, APL \\
+           & SQL, cg, Clarion, Clipper, QCL, K, MUMPS, Q, R, S, J, O \\
+    \hline
+  \end{tabular}
+\end{table}
+
+
 \subsection{Мета і завдання дослідження}
 Одна з причин низького рівня впровадження у виробництво систем
 верифікації -- це висока складність таких систем. Складні системи
@@ -142,27 +201,36 @@
 i) середовища виконання; ii) формального інтерпретатора; iii) системи формальних мов
 для доведення теорем математики, програмної інженерії та філософії.
 
-\subsection{Формальна верифікація}
-
+\subsection*{Формальна верифікація}
 У розділі 1 дається огляд існуючих рішень для доведення
 властивостей систем та моделей, класифікуються мови програмування
 та системи доведення теорем.
 
-\subsection{Концептуальна модель системи доведення теорем на основі гомотопічної теорії типів}
-У розділі 2 розглядається повний стек формального програмного забезпечення
-від віртуальної машини, байт-код інтерпретатора та середовища виконання
+\subsection*{Концептуальна модель формальної системи мов}
+У розділі 2 розглядається математична модель формальної системи.
+
+\subsection*{Система мов середовища виконання}
+У розділі 3 разказується про повний стек формального програмного забезпечення
+від віртуальної машини, байт-код інтерпретатора, середовища виконання
 та планування процесів до формальної мови для доведення теорем (або сімейства мов).
 
-\subsection{Базова бібліотека}
-У розділі 3 описується базова бібліотека, написана на самій потужній
-формальній мові системи доведення теорем.
+\subsection*{Система вищих формальних мов}
+У розділі 4 подається опис системи вищих формальних мов до
+кубічної теорії та гомотопічної системи типів.
 
-\subsection{Математичні компоненти}
-У розділі 4 пропонується ряд математичних моделей та теорій з використанням
+\subsection*{Базова бібліотека середовища виконання}
+У розділі 5 описується базова бібліотека системи середовища виконання,
+написана на мові Erlang.
+
+\subsection*{Базова бібліотека формальних мов}
+У розділі 6 описується базова бібліотека системи формальних мов, індуктивна
+та гомотопічні системи типів.
+
+\subsection*{Математичні компоненти}
+У розділі 7 пропонується ряд математичних моделей та теорій з використанням
 базової бібліотеки розділу 3 та мови гомотопічної системи типів.
 
-\subsection*{Додатки}
-
+\subsection*{Додаткові матеріали}
 У додатках надаються приклади іншого використання фомальних мов та моделей,
 зокрема для мінімальної формальної мови, побудованої в рамках дисертації,
 та мови програмування Coq. А також дається приклад використання

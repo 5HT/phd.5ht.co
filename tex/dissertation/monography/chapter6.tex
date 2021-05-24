@@ -784,7 +784,7 @@ sys     0m0.014s
 
 \section{Індуктивні типи}
 
-\subsection{Empty}
+\subsection{Empty, Unit}
 
 empty type lacks both introduction rules and eliminators. However, it has recursor and induction.
 
@@ -794,14 +794,13 @@ emptyRec (C: U): empty -> C = split {}
 emptyInd (C: empty -> U): (z: empty) -> C z = split {}
 \end{lstlisting}
 
-\subsection{Unit}
 \begin{lstlisting}
 data unit = star
 unitRec (C: U) (x: C): unit -> C = split tt -> x
 unitInd (C: unit -> U) (x: C tt): (z: unit) -> C z = split tt -> x
 \end{lstlisting}
 
-\subsection{Bool}
+\subsection{Bool, Maybe, Either, Tuple}
 
 \begin{definition} (Bool).
 bool is a run-time version of the boolean logic you may use
@@ -821,8 +820,6 @@ boolInd (C: bool -> U) (f: A false) (t: A true): (n:bool) -> A n
 \end{lstlisting}
 \end{definition}
 
-\subsection{Maybe}
-
 \begin{definition} (Maybe).
 Maybe has representing functor $M_A(X) = 1 + A$.
 It is used for wrapping values with optional nothing constructor.
@@ -839,7 +836,6 @@ maybeInd (A: U) (P: maybe A -> U) (n: P nothing)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Either}
 either is a representation for sum types or disjunction.
 \begin{lstlisting}
 data either (A B: U) = left (x: A) | right (y: B)
@@ -853,7 +849,6 @@ eitherInd (A B: U) (C: either A B -> U)
         = split { inl i -> x i ; inr j -> y j }
 \end{lstlisting}
 
-\subsection{Tuple}
 tuple is a representation for non-dependent product types or conjunction.
 \begin{lstlisting}
 data tuple (A B: U) = pair (x: A) (y: B)
@@ -866,7 +861,7 @@ tupleInd  (A B: U) (C: tuple A B -> U)
         = split pair a b -> c a b
 \end{lstlisting}
 
-\subsection{Nat}
+\subsection{Nat, List, Stream}
 Pointed Unary System is a category nat with the terminal
 object and a carrier nat having morphism [zero: 1nat → nat, succ: nat → nat].
 The initial object of nat is called Natural Number Object and models Peano axiom set.
@@ -884,8 +879,6 @@ natElim (C:nat->U) (z: C zero)
 natInd  (C:nat->U) (z: C zero)
         (s: (n:nat)->C(n)->C(succ n)): (n:nat) -> C(n)
 \end{lstlisting}
-
-\subsection{List}
 
 \begin{definition} (List).
 The data type of list L over a given set A can be represented
@@ -921,18 +914,14 @@ listEq (A: eq): list A.1 −> list A.1 −> bool
 \end{lstlisting}
 \end{definition}
 
-\subsection{Stream}
-
 stream is a record form of the list's cons constructor. It models the infinity list that has no terminal element.
-
 \begin{lstlisting}
 data stream (A: U) = cons (x: A) (xs: stream A)
 \end{lstlisting}
 
-\subsection{Fin}
+\subsection{Fin, Vector, Seq}
 
 fin is the inductive defintion of set with finite elements.
-
 \begin{lstlisting}
 data fin (n: nat)
    = fzero | fsucc (_: fin (pred n))
@@ -941,17 +930,13 @@ fz (n: nat): fin (succ n)          = fzero
 fs (n: nat): fin n -> fin (succ n) = \(x: fin n) -> fsucc x
 \end{lstlisting}
 
-\subsection{Vector}
-
 vector is the inductive defintion of limited length list.
-
 \begin{lstlisting}
 data vector (A: U) (n: nat)
    = nil | cons (_: A) (_: vector A (pred n))
 \end{lstlisting}
 
 seq — abstract compositional sequences.
-
 \begin{lstlisting}
 data seq (A: U) (B: A -> A -> U) (X Y: A)
    = seqNil (_: A)
