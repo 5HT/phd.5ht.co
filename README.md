@@ -1,7 +1,7 @@
-FORMAL SYSTEM ONE
-=================
+FORMAL SYSTEM 1
+===============
 
-Formal System One --- is a blueprint of set of formal languages for concurrent and parallel runtime environment, programs, software verification, model checking, higher homotopic and modal languages, and formal philosophy.
+Formal System 1 --- formal runtime, languages and base libraries for programming, theorem proving and formal philosophy.
 
 Monography.PDF
 --------------
