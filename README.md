@@ -1,7 +1,7 @@
-FORMAL SYSTEM 1
-===============
+FORMAL SYSTEM ONE
+=================
 
-Formal System 1 --- formal runtime, languages and base libraries for programming, theorem proving and formal philosophy.
+Formal System ONE. Runtime environment, system of formal languages and base libraries for programming, theorem proving and formal philosophy.
 
 Monography.PDF
 --------------
