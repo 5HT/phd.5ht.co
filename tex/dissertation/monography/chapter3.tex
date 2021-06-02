@@ -1,8 +1,9 @@
 \chapter{Система мов середовища виконання}
+\epigraph{Присвячується автору Erlang}{Джо Армстронгу}
+
 Третій розділ описує розвиток концептуальної моделі системи доведення теорем як сукупності
 формальних середовищ виконання, кожне наступе з яких, складніше за попереднє,
 має свою операційну семантику, та наслідує усі властивості попередніх операційних середовищз послідовності.
-
 
 \section{Інтерпретатор як основна лямбда-система}
 
@@ -89,11 +90,11 @@ data Lazy = Defer (otree: NodeId) (a: AST) (cont: Cont)
 функція та аплікація, є відображеннями на конструктори синтаксичного дерева.
 
 \begin{lstlisting}
-data Cont = Expressions (ast: AST) (vec: Option (Iter AST)) (cont: Cont)
+data Cont = Expressions (a: AST) (v: Option (Iter AST)) (c: Cont)
           | Assign (ast: AST) (cont: Cont)
           | Cond (c,d: AST) (cont: Cont)
           | Func (a,b,c: AST) (cont: Cont)
-          | List (acc: Vec AST) (vec: Iter AST) (i: Nat) (cont: Cont)
+          | List (acc: Vec AST) (vec: Iter AST) (i: Nat) (c: Cont)
           | Call (a: AST) (i: Nat) (cont: Cont)
           | Return
           | Intercore (m: Message) (cont: Cont)
@@ -114,9 +115,11 @@ FL: E | o:E | m:FC = Cons o m
 EL: E | EC  | o:E m:EC = Cons o m
 C: N | c:N a:C = Call c a
 N: NAME | S | HEX | L | F
-L: "(" ")" = [] | "([" c:NL "]" m:FL ")" = Table c m | "(" l:EL ")" = List l
-F: "{" "}" = Lambda [] [] [] | "{[" c:NL "]" m:EL "}" = Lambda [] c m
-                             | "{" m:EL "}" = Lambda [] [] m
+L: "(" ")" = [] | "([" c:NL "]" m:FL ")" = Table c m
+                | "(" l:EL ")" = List l
+F: "{" "}" = Lambda [] [] []
+           | "{[" c:NL "]" m:EL "}" = Lambda [] c m
+           | "{" m:EL "}" = Lambda [] [] m
 \end{lstlisting}
 
 Після парсера, синтаксичне дерево розкладається по наступним складовим: AST для

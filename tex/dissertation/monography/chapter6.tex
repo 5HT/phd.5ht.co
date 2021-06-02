@@ -1,4 +1,5 @@
 \chapter{Базова бібліотека формальних мов}
+\epigraph{Присвячується учителям американскої школи формальної філософії}{}
 
 В третьому розділі дається опис гомотопічної мови програмування,
 реалізація якої вперше була представлена CCHM в 2017 році, та для якої написана
@@ -1236,7 +1237,18 @@ completePullback (A B C: U) (f: A -> C) (g: B -> C)
 \end{lstlisting}
 \end{theorem}
 
-\subsection{Фібрації}
+\subsection{Пушаути та фібрації}
+
+\begin{definition} (Pushout). One of the notable examples is pushout as it's used
+to define the cell attachment formally, as others cofibrant objects.
+\begin{lstlisting}
+data pushout (A B C: U) (f: C -> A) (g: C -> B)
+   = po1 (_: A)
+   | po2 (_: B)
+   | po3 (c: C) <i> [ (i = 0) -> po1 (f c) ,
+                      (i = 1) -> po2 (g c) ]
+\end{lstlisting}
+\end{definition}
 
 \begin{definition} (Fibration-1) Dependent fiber bundle derived from Path contractability.
 \begin{lstlisting}
@@ -1280,7 +1292,7 @@ isFBundle4 (E B: U) (p: E -> B) (F: U): U
 \end{lstlisting}
 \end{definition}
 
-\subsection{Еквівалентність}
+\subsection{Еквівалентність, Ізоморфізм, Унівалентність}
 
 \begin{definition} (Equivalence).
 \begin{lstlisting}
@@ -1338,7 +1350,7 @@ hae (A B: U): U
 \end{lstlisting}
 \end{definition}
 
-\subsection{Ізоморфізм}
+Ізоморфізм.
 
 \begin{definition} (iso-Formation)
 \begin{lstlisting}
@@ -1372,7 +1384,7 @@ iso_Uniq (A B : U) (p: isIso A B)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Унівалентність}
+Унівалентність.
 
 \begin{definition} (uni-Formation)
 \begin{lstlisting}
@@ -1458,7 +1470,7 @@ data S2
 \end{lstlisting}
 \end{definition}
 
-\subsection{Суспензія}
+\subsection{Суспензія та цикли}
 
 \begin{definition} (Suspension).
 \begin{lstlisting}
@@ -1471,7 +1483,7 @@ data susp (A: U)
 \end{definition}
 
 
-\subsection{Транкейшин}
+\subsection{Транкейшин та факторизація}
 
 \begin{definition} (Truncation).
 \end{definition}
@@ -1509,7 +1521,7 @@ data gTrunc (A: U) -- (1)-trunc, groupoid truncation
            (k = 1) -> b ]
 \end{lstlisting}
 
-\subsection{Факторизація}
+Факторизація.
 
 \begin{definition} (Quotient).
 \begin{lstlisting}
@@ -1534,18 +1546,6 @@ data setquot (A: U) (R: A -> A -> U)
 \end{lstlisting}
 \end{definition}
 
-\subsection{Пушаут}
-
-\begin{definition} (Pushout). One of the notable examples is pushout as it's used
-to define the cell attachment formally, as others cofibrant objects.
-\begin{lstlisting}
-data pushout (A B C: U) (f: C -> A) (g: C -> B)
-   = po1 (_: A)
-   | po2 (_: B)
-   | po3 (c: C) <i> [ (i = 0) -> po1 (f c) ,
-                      (i = 1) -> po2 (g c) ]
-\end{lstlisting}
-\end{definition}
 
 \section{Модальності}
 
