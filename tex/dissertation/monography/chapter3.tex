@@ -184,7 +184,7 @@ $$
 
 \subsection{Категорія середовища виконання $O_{CPS}$}
 
-\begin{definition} (Категорія середовища виконнання$O_{СPS}$).
+\begin{definition} (Категорія середовища виконнання $O_{CPS}$).
 $$
 O_{CPS} =
 \begin{cases}
@@ -197,7 +197,7 @@ $$
 Синтаксис середовища виконання може містити наступні синтаксиси:
 $O_\lambda$, $O_\pi$, $O_\mu$.
 
-\begin{definition} (Синтаксис мовної категорії $O_{HTS}$).
+\begin{definition} (Синтаксис мовної категорії $O_{CPS}$).
 \begin{lstlisting}
 data CPS = church (_: lambda CPS)
          | milner (_: pi     CPS)
@@ -209,7 +209,7 @@ data CPS = church (_: lambda CPS)
 своїм трьома конструкторами: номер змінної (індекс де Брейна),
 лямбда функція та її апплікація:
 \begin{lstlisting}
-data lambda = var (x: nat)
+data church = var (x: nat)
             | lam (l: nat) (d: cps)
             | app (f a: cps)
 \end{lstlisting}
@@ -220,7 +220,7 @@ data lambda = var (x: nat)
 \begin{definition} (Синтаксичне дерево $O_\pi$).
 Правило формації, конструктора та елімінатора визначається синтаксичним деревом $O_*$:
 \begin{lstlisting}
-data pi (lang: U)
+data milner (lang: U)
    = process (protocol: lang)
    | spawn (cursors: lang) (core: nat) (program: lang)
    | snd (cursor: lang) (data: lang)
