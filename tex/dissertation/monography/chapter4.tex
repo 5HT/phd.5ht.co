@@ -1,5 +1,5 @@
 \chapter{Базова бібліотека середовища виконання}
-\epigraph{Присвячується автору System F}{Жану-Іву Жирару}
+\epigraph{Присвячується автору формальної системи F}{Жану-Іву Жирару}
 
 Після побудови в розділі 3 формального середовища виконання,
 яке складається з операційної системи у якій виконуються
@@ -67,16 +67,26 @@ System F, System Fω які успішно використовуються в �
 Третій рівень — мови які погано піддаються масштабуванню у
 промисловому виробництві (на основі спостережень за власним досвідом).
 
-\begin{lstlisting}
-    Client Tier 3: (JavaScript, Lua)
-    Client Tier 2: (Swift, Kotlin, TypeScript)
-    Client Tier 1: (UrWeb, OCaml, PureScript)
-    Client Tier 0: (Formality, PTS)
-
-    Server Tier 3: (PHP, Python, Perl, Ruby)
-    Server Tier 2: (Erlang, Elixir)
-    Server Tier 1: (Standard ML, Haskell, F#, Rust, Hamler)
-    Server Tier 0: (Coq, Agda, Lean, MLTT/HTS)
+\begin{table}[h]
+\begin{center}
+\caption{Перелік кваліфікаційних рівніх верифікації}
+\tabcolsep7pt\begin{tabular}{lcccc}
+\hline
+\textbf{Сторона/Рівень} & \textbf{Приклади мов} \\
+\hline
+    клієнт/3 & JavaScript, Lua \\
+    клієнт/2 & Swift, Kotlin, TypeScript \\
+    клієнт/1 & UrWeb, OCaml, PureScript \\
+    клієнт/0 & Kind, PTS \\
+    \hline
+    сервер/3 & PHP, Python, Perl, Ruby \\
+    сервер/2 & Erlang, Elixir \\
+    сервер/1 & SML, Haskell, F#, Rust, Hamler \\
+    сервер/0 & Coq, Agda, Lean, MLTT/HTS \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 \end{lstlisting}
 
 \subsection{Обрані мови реалізації}
@@ -168,6 +178,33 @@ Read, Record, Regex, Set, Time, Tuple.
 \subsubsection{Database}
 Модулі простору Database: Mnesia, ETS.
 
+\begin{lstlisting}
+module RT.ETS where
+
+all : IO [TableId]
+browse : IO String
+delete : (k: U) -> TableId -> k -> IO ()
+first : TableId -> (k: U) -> IO (Maybe k)
+last : (k: U) -> TableId -> IO (Maybe k)
+foldl : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
+foldr : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
+giveAway : (a: U) -> TableId -> Pid -> a -> IO ()
+getInfo : (v: U) -> TableId -> Atom -> IO v
+insert : (v: U) -> TableId -> v -> IO Boolean
+lookup : (k v: U) -> TableId -> k -> IO (List v)
+member : (k: U) -> TableId -> k -> IO Boolean
+new : Atom -> TableOptions -> IO TableId
+next : (k: U) -> TableId -> k -> IO (Maybe k)
+prev : (k: U) -> TableId -> k -> IO (Maybe k)
+rename : TableId -> Atom -> IO Atom
+tab2list : (v: U) -> TableId -> IO (List v)
+take : (k v: U) -> TableId -> k -> IO (List v)
+whereis : Atom -> IO TableId
+match : (a v: U) -> TableId -> a -> IO (List v)
+slot : (v: U) -> TableId -> Integer -> IO (Maybe (List v))
+tabfileInfo : FilePath -> IO TableInfo
+\end{lstlisting}
+
 \subsubsection{Filesystem}
 Модулі простору Filesystem: Dir, File, FilePath, IO, Active.
 
@@ -191,17 +228,19 @@ Ring, MQTT, WS, TCP, Heart, Syn, FTP, NITRO, ETF, GCM, Session, Cache.
 супервізією середовища виконання.
 
 \begin{lstlisting}
-pickle     :: Binary -> Binary
-depickle   :: Binary -> Binary
-encode     :: forall k. k -> Binary
-decode     :: forall k. Binary -> IO k
-reg        :: forall k. k -> IO k
-unreg      :: forall k. k -> IO k
-send       :: forall k v z. k -> v -> IO z
-getSession :: forall k v. k -> IO v
-putSession :: forall k v. k -> v -> IO v
-getCache   :: forall k v. Atom -> k -> IO v
-putCache   :: forall k v. Atom -> k -> v -> IO v
+module N2O where
+
+pickle : Binary -> Binary
+depickle : Binary -> Binary
+encode : (k: U) -> k -> Binary
+decode : (k: U) -> Binary -> IO k
+reg: (k: U) -> k -> IO k
+unreg : (k: U) -> k -> IO k
+send : (k v z: U) -> k -> v -> IO z
+getSession : (k v: U) -> k -> IO v
+putSession : (k v: U) -> k -> v -> IO v
+getCache : (k v: U) -> Atom -> k -> IO v
+putCache : (k v: U) -> Atom -> k -> v -> IO v
 \end{lstlisting}
 
 Тут залишено лише саме необхідне, але не настільки тривіальне аби бути іграшковим.
@@ -218,11 +257,12 @@ putCache   :: forall k v. Atom -> k -> v -> IO v
 асинхронних процесів.
 
 \begin{lstlisting}
-data PI  = PI String Atom Atom Atom Integer RestartType
-data Sup = Ok Pid String
-         | Error String
+module N2O.PI where
 
-startPi :: PI -> IO Sup
+data PI  = PI String Atom Atom Atom Integer RestartType
+data Sup = Ok Pid String | Error String
+
+start : PI -> IO Sup
 \end{lstlisting}
 
 \subsection{Сховище даних KVS}
