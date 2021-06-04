@@ -1,5 +1,5 @@
 default:
-	(xelatex --interaction nonstopmode diss.tex)
+	(xelatex --interaction nonstopmode monography.tex)
 	return 0
 
 
