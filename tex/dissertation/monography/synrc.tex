@@ -1,6 +1,7 @@
 \usepackage[osf]{mathpazo}
 \usepackage{musicography}
 \usepackage{stmaryrd}
+\usepackage{color, colortbl}
 \usepackage{epigraph}
 \usepackage[mathcal,mathbf]{euler}
 \usepackage{amsmath,amssymb,amsthm}
@@ -29,6 +30,9 @@
 \newtheorem{definition}{Визначення}
 \newtheorem{exercise}{Вправа}
 \newtheorem{example}{Приклад}
+
+\definecolor{LightGray}{rgb}{0.8,0.8,0.8}
+\definecolor{LightGray25}{rgb}{0.9,0.9,0.9}
 
 \newcommand*{\incmap}{\hookrightarrow}
 
@@ -139,9 +143,9 @@
 \renewcommand{\fnum@table}{
     \checkoddpage
     \ifoddpage
-        \makebox[0pt][l]{\hspace{-1in}{\tablename ~ \thetable}}
+        \makebox[0.7in][l]{{\tablename ~ \thetable}}
     \else
-        \makebox[0pt][r]{{\tablename ~ \thetable}\hspace*{-5in}}
+        \makebox[0.7in][r]{{\tablename ~ \thetable}}
     \fi
     }
 

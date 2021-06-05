@@ -1,4 +1,4 @@
-\chapter{Базова бібліотека середовища виконання}
+\chapter{Бібліотека середовища виконання}
 \epigraph{Присвячується автору формальної системи F}{Жану-Іву Жирару}
 
 Після побудови в розділі 3 формального середовища виконання,
@@ -76,12 +76,16 @@ System F, System Fω які успішно використовуються в �
 \hline
     клієнт/3 & JavaScript, Lua \\
     клієнт/2 & Swift, Kotlin, TypeScript \\
+\rowcolor{LightGray}
     клієнт/1 & UrWeb, OCaml, PureScript \\
+\rowcolor{LightGray}
     клієнт/0 & Kind, PTS \\
     \hline
     сервер/3 & PHP, Python, Perl, Ruby \\
     сервер/2 & Erlang, Elixir \\
-    сервер/1 & SML, Haskell, F#, Rust, Hamler \\
+\rowcolor{LightGray}
+    сервер/1 & SML, Scala, Haskell, F#, Rust, Hamler \\
+\rowcolor{LightGray}
     сервер/0 & Coq, Agda, Lean, MLTT/HTS \\
 \hline
 \end{tabular}
@@ -90,6 +94,8 @@ System F, System Fω які успішно використовуються в �
 \end{lstlisting}
 
 \subsection{Обрані мови реалізації}
+
+Тут перелічені мови, на яких реалізовано та апробовано N2O.TECH.
 
 \textbf{Standard ML}\footnote{\url{https://github.com/o1}}. В академічних цілях Марат Хафізов створив
 за специфікаєю N2O/NITRO порт на мови Standard ML (SML/NJ та MLton).
@@ -103,12 +109,15 @@ System F, System Fω які успішно використовуються в �
 на мову F# разом з ETF кодуванням. Ці напрацювання представлені в Github
 організації O61.
 
-\textbf{Lean 4}\footnote{\url{https://github.com/o89}}. У якості більшо формальної платформи з залежними типами,
+\textbf{Lean}\footnote{\url{https://github.com/o89}}. У якості більшо формальної платформи з залежними типами,
 мова Lean 4 від Леонардо де Мура з Microsoft. Siegmentation Fault автор порта,
 який представлений Github організацією O89 та сайтом lean4.dev.
 
-\textbf{Erlang/Elixir}\footnote{\url{https://github.com/synrc}}. Єдина промислова платформа, яка в повній мірі реалізує
-специфікацію N2O.TECH --- Erlang/Elixir.
+\textbf{Erlang}\footnote{\url{https://github.com/synrc}}. Основна промислова платформа, яка в повній мірі реалізує
+специфікацію N2O.TECH.
+
+\textbf{Elixir}\footnote{\url{https://github.com/synrc}}. Адаптація N2O.TECH для мови Elixir.
+Основна імплементація не змінена, постійно підтримується публікація пакетів на HEX.PM.
 
 \textbf{Hamler}. Нова формальна платоформа на базі PureScript для віртуальної машини Erlang.
 В подальшому цей розділ буде присвячений імплементації та специфікації
@@ -117,19 +126,19 @@ System F, System Fω які успішно використовуються в �
 \begin{table}[h]
 \begin{center}
 \caption{Перелік мов для яких існує версія базової бібліотеки}
-\tabcolsep7pt\begin{tabular}{lcccc}
+\begin{tabular}{lcc}
 \hline
 \textbf{Мова/Платформа} & \textbf{Набір реалізованих компонент} \\
 \hline
 Erlang/OTP & N2O, BPE, KVS, NITRO, MAD, FORM \\
 Elixir/OTP & N2O, BPE, KVS, NITRO, FORM \\
 \hline
-Hamler/OTP & RT, BASE, N2O, BPE, KVS \\
+\rowcolor{LightGray}
+Hamler/OTP & RT, BASE, N2O, BPE, KVS, NITRO \\
 \hline
 Standard ML & N2O, NITRO, ETF \\
 Haskell & N2O, NITRO, ETF \\
 F\# & N2O, NITRO, ETF \\
-\hline
 Lean 4 & N2O, NITRO, MAD, ETF \\
 \hline
 \end{tabular}
@@ -171,7 +180,7 @@ Read, Record, Regex, Set, Time, Tuple.
 
 Сигнатури додатка BASE максимально сумісні з базовою бібліотекою Hamler.
 
-\subsection{Сервіси середовище виконання RT}
+\subsection{Сервіси середовища виконання RT}
 Сервіси середовища виконання представлені додатком RT, іменні простори якого
 дещо відрізняються від відповідних сигнатур базової бібліотеки мови Hamler.
 
@@ -180,29 +189,25 @@ Read, Record, Regex, Set, Time, Tuple.
 
 \begin{lstlisting}
 module RT.ETS where
+import RT.ETS.Types
 
-all : IO [TableId]
+all    : IO [TableId]
 browse : IO String
 delete : (k: U) -> TableId -> k -> IO ()
-first : TableId -> (k: U) -> IO (Maybe k)
-last : (k: U) -> TableId -> IO (Maybe k)
-foldl : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
-foldr : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
-giveAway : (a: U) -> TableId -> Pid -> a -> IO ()
-getInfo : (v: U) -> TableId -> Atom -> IO v
+first  : TableId -> (k: U) -> IO (Maybe k)
+last   : (k: U) -> TableId -> IO (Maybe k)
+foldl  : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
+foldr  : (v acc: U) -> (v -> acc -> acc) -> acc -> TableId -> IO acc
 insert : (v: U) -> TableId -> v -> IO Boolean
 lookup : (k v: U) -> TableId -> k -> IO (List v)
 member : (k: U) -> TableId -> k -> IO Boolean
-new : Atom -> TableOptions -> IO TableId
-next : (k: U) -> TableId -> k -> IO (Maybe k)
-prev : (k: U) -> TableId -> k -> IO (Maybe k)
+new    : Atom -> TableOptions -> IO TableId
+next   : (k: U) -> TableId -> k -> IO (Maybe k)
+prev   : (k: U) -> TableId -> k -> IO (Maybe k)
 rename : TableId -> Atom -> IO Atom
-tab2list : (v: U) -> TableId -> IO (List v)
-take : (k v: U) -> TableId -> k -> IO (List v)
-whereis : Atom -> IO TableId
-match : (a v: U) -> TableId -> a -> IO (List v)
-slot : (v: U) -> TableId -> Integer -> IO (Maybe (List v))
-tabfileInfo : FilePath -> IO TableInfo
+take   : (k v: U) -> TableId -> k -> IO (List v)
+match  : (a v: U) -> TableId -> a -> IO (List v)
+slot   : (v: U) -> TableId -> Integer -> IO (Maybe (List v))
 \end{lstlisting}
 
 \subsubsection{Filesystem}
@@ -265,15 +270,68 @@ data Sup = Ok Pid String | Error String
 start : PI -> IO Sup
 \end{lstlisting}
 
+\newpage
 \subsection{Сховище даних KVS}
 Сервіси сховища даних представлені додатком KVS: KVS,
-Stream, St, Rocks, Mnesia, FS.
+Stream, ST, Rocks, Mnesia, FS.
+
+\begin{lstlisting}
+module KVS where
+import KVS.Types
+
+get    : (f k v: U) -> f -> k -> IO (Maybe v)
+put    : (r: U) -> r -> IO StoreResult
+delete : (f k: U) -> f -> k -> StoreResult
+index  : (f p v r: U) -> f -> Atom -> v -> List r
+\end{lstlisting}
+
+\begin{lstlisting}
+module KVS.Stream where
+import ETF.Types
+
+data Reader = Reader Integer Binary ETF String Integer
+data Writer = Writer Integer Binary ETF String Integer
+data StoreResult = Ok Integer String Binary
+                 | Error Integer String Binary
+
+next : Reader -> IO Reader
+prev : Reader -> IO Reader
+take : Reader -> IO Reader
+drop : Reader -> IO Reader
+save : Reader -> IO Reader
+append : (f r: U) -> f -> r -> IO StoreResult
+remove : (f r: U) -> f -> r -> IO StoreResult
+\end{lstlisting}
 
 \subsection{Бізнес-процеси BPE}
 Сервіси системи управління бізнес-процесами
 представлені додатком BPE: BPE, Event, Action, Process, Hist, Flow.
 
+\begin{lstlisting}
+module BPE where
+import BPE.Types
+
+data ProcId = String
+data Proc = Proc ProcId String
+data ProcRes = Ok Integer String Binary
+             | Error Integer String Binary
+
+start   : Proc   -> IO Sup
+stop    : String -> IO Sup
+next    : ProcId -> IO ProcRes
+amend   : (k: U) -> ProcId -> k -> IO ProcRes
+discard : (k: U) -> ProcId -> k -> IO ProcRes
+modify  : (k: U) -> ProcId -> k -> Atom -> IO ProcRes
+event   : ProcId -> String -> IO ProcRes
+head    : ProcId -> IO Hist
+hist    : ProcId -> IO (List Hist)
+\end{lstlisting}
+
 \subsection{Контрольні елементи протоколу NITRO}
 Сервіси веб-фреймворка, представлені додатком NITRO: NITRO, Combo,
 Edit, Form, Input, Table, Actions, Render.
 
+\begin{lstlisting}
+\end{lstlisting}
+
+\section{Висновки}

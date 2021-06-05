@@ -96,7 +96,7 @@ decode (o:U): allpaths o -> ((p: concept o) -> nondual o p)
 2) хороший пример к первой главе HoTT на пространство путей и модуль path.
 
 \newpage
-\section{Формалізація вводу-виводу для OCaml}
+\section{Формалізація вводу-виводу для Coq/OCaml}
 
 \begin{lstlisting}
 CoInductive Co (E : Effect.t) : Type -> Type :=
@@ -157,7 +157,7 @@ Definition main := launch corun.
 \end{lstlisting}
 
 \newpage
-\section{Формалізація вводу-виводу для Erlang}
+\section{Формалізація вводу-виводу для PTS/BEAM}
 
 This work is expected to compile to a limited number of target platforms.
 For now, Erlang, Haskell, and LLVM are awaiting.

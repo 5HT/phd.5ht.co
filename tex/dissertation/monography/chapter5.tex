@@ -1,6 +1,6 @@
 \addtocontents{toc}{\protect\newpage}
 
-\chapter{Система вищих формальних мов}
+\chapter{Система вищих мов}
 \epigraph{Присвячується автору MLTT}{Перу Мартіну-Льофу}
 
 Четвертий розділ описує розвиток концептуальної моделі системи доведення теорем як сукупності:
@@ -16,224 +16,6 @@
 глибинну категорну семантику типових систем. Ця робота цілком відповідає
 моделі типів Мартіна-Льофа та показує те тільки конфігурацію конкретного спектра мов,
 але і визначає модель для опису цього спектру.
-
-
-\section{Формальні мови програмування}
-Тут йдеться про мови програмування придатні для доведення теорем,
-та їх таксономію від найелементарніших (чистої системи з одним типом $\Pi$) до
-найпотужніших гомотопічних систем. Одна така гомотопічна система є кінцевим завданням
-цього розділу --- побудова моделі гомотопічного верифікатора.
-В процесі його побудови в цьому розділі ми розглянемо під
-мікроскопом складові частини його нижчих мовних рівнів.
-
-Застосуємо категорну семантику для мов програмування і будемо розглядати
-мови програмування як моноїдальні мовні категорі, об'єкти яких є просторами
-усіх програм цих мов програмування, а морфізми --- правила верифікації та компіляції цих мов.
-Морфізми між мовними категоріями в категорї мов програмування --- це
-функтори підвищення та пониження складності мови, подібно до того як діють
-морфізми в контекстуальних категоріях. Морфізм деконструює або конструює за
-допомогою Either-типу або $\Sigma$-типу індуктивний тип мови програмування.
-
-Мови розкладаються у спектральну (індексовану натуральними числами $N \rightarrow U$)
-послідовність мов, кожен елемент якої є мовою програмування,
-яка не містить синтаксичне дерево вищої мови програмування.
-
-\subsection{Чиста система типів $O_{PTS}$}
-
-Чиста ситема або числення конструкцій або система з одим типом або
-система з однією аксіомою, продовжує традиції елементарних пруверів
-в стилі першого AUTOMATH та сучасних Henk, Morte, Cedile, Om.
-
-\begin{definition} (Мовна категорія чистої мови $O_{PTS}$).
-\begin{equation}
-O_{PTS} =
-\begin{cases}
-Ob: \{\ X: maybe\ PTS, target: maybe\ CPS \ \} \\
-Hom: \begin{cases}
-type,norm: X \rightarrow X, extract: X \rightarrow target \\
-certify: X \rightarrow target = type \circ norm \circ extract
-\end{cases}
-\end{cases}
-\end{equation}
-\end{definition}
-
-\begin{definition} (Синтаксис мовної категорії $O_{PTS}$).
-Чиста мова $O_{PTS}$ містить лише синтаксис одного типу, $\Pi$-типу.
-Така теорія називається теорією з одним типом, або з однією аксіомою.
-\begin{lstlisting}
-data PTS = ppure (_: pts PTS)
-\end{lstlisting}
-\end{definition}
-
-Вона описана в літературі як Calculus of Construction (Кокан),
-Pure Type System (Стемп, Фу).
-
-\begin{definition} (Синтаксичне дерево $O_\Pi$).
-\begin{lstlisting}[mathescape=true]
-data pts (lang: U)
-   = star (n: nat)
-   | var (x: name) (l: nat)
-   | pi (x: name) (l: nat) (f: lang)
-   | lambda  (x: name) (l: nat) (f: lang)
-   | app (f a: lang)
-\end{lstlisting}
-\end{definition}
-
-\subsection{Теорія типів Мартіна-Льофа $O_{MLTT}$}
-
-Мова теорії типів є сучасною основою всіх пруверів з залежними типами,
-такими, наприклад, як NuPRL та Agda. Багато так званих $\Pi\Sigma$ пруверів
-імплементують $MLTT$ серед таких як:
-$\Pi\Sigma$\footnote{\url{https://github.com/zlizta/pisigma-0-2-2}},
-$\Pi\forall$\footnote{\url{https://github.com/sweirich/pi-forall}}.
-
-\begin{definition} (Мовна категорія $O_{MLTT}$).
-\begin{equation}
-O_{MLTT} =
-\begin{cases}
-Ob: \{\ maybe\ MLTT\ \} \\
-Hom: \begin{cases}
-type,norm: Ob \rightarrow Ob \\
-certify: Ob \rightarrow Ob = type \circ norm
-\end{cases}
-\end{cases}
-\end{equation}
-\end{definition}
-
-\begin{definition} (Синтаксис мовної категорії $O_{MLTT}$).
-Мова $O_{MLTT}$ включає в себе синтаксиси трьох типів
-теорії Мартіна-Льофа: $O_\Pi$, $O_\Sigma$, $O_=$.
-\begin{lstlisting}
-data MLTT = mpure (_: pts MLTT)
-          | msigma (_: exists MLTT)
-          | mid (_: identity MLTT)
-\end{lstlisting}
-\end{definition}
-
-\begin{definition} (Синтаксичне дерево $O_\Sigma$).
-Також можна до чистої системи додати $\Sigma$-тип,
-піднявши типову систему до мови $O_{MLTT-72}$ або $O_{\Pi\Sigma}$ :
-\begin{lstlisting}[mathescape=true]
-data exists (lang: U)
-   = sigma (n: name) (a b: lang)
-   | pair (a b: lang)
-   | fst (p: lang)
-   | snd (p: lang)
-\end{lstlisting}
-\end{definition}
-
-\begin{definition} (Синтаксичне дерево $O_=$).
-Додавши тип рівності можно підняти систему ще на одну сходинку,
-до $O_{MLTT-84}$ або $O_{\Pi\Sigma=}$:
-\begin{lstlisting}[mathescape=true]
-data identity (lang: U)
-   = id (t a b: lang)
-   | id_intro (a b: lang)
-   | id_elim (a b c d e: lang)
-\end{lstlisting}
-\end{definition}
-
-\subsection{Система індуктивних типів $O_{ITS}$}
-
-\begin{definition} (Мовна категорія $O_{ITS}$).
-\begin{equation}
-O_{ITS} =
-\begin{cases}
-Ob: \{\ X: maybe\ ITS, target: maybe\ CPS\ \} \\
-Hom: \begin{cases}
-type,norm,induction: X \rightarrow X, extract: X \rightarrow target \\
-certify : X \rightarrow target \\
-cerfity = type \circ norm \circ induction \circ extract \\
-\end{cases}
-\end{cases}
-\end{equation}
-\end{definition}
-
-Мова індуктивних типів дозволяє безпосередньо кодувати індуктивні типи,
-не використовуючи схеми кодування Бома, містить усі попередні мовні синтаксиси:
-$O_=$, $O_\Sigma$, $O_\Pi$.
-
-\begin{definition} (Синтаксичне дерево мовної категорії $O_{ITS}$).
-\begin{lstlisting}
-data ITS = ipure (_: pts ITS)
-         | isigma (_: exists ITS)
-         | iid (_: identity ITS)
-         | iITS (_: ind ITS)
-\end{lstlisting}
-\end{definition}
-
-Мова містить наступні допоміжні визначення: i) телескопу,
-який містить послідовність елементів мови; ii) розгалуження,
-як конструкцій case оператора; iii) імен конструкторів індуктивного типу.
-
-\begin{lstlisting}
-data tele   (A: U) = emp | tel (n: name) (b: A) (t: tele A)
-data branch (A: U) =        br (n: name) (args: list name) (term: A)
-data label  (A: U) =       lab (n: name) (t: tele A)
-                         | com (n: name) (t: tele A) (dim: list name)
-                               (s: list  (prod (prod name bool) A))
-\end{lstlisting}
-
-\begin{definition} (Синтаксичне дерево $O_*$).
-Правило формації, конструктора та елімінатора визначається синтаксичним деревом $O_*$:
-\begin{lstlisting}
-data ind (lang: U)
-   = datum  (n: name) (t: tele lang) (labels:   list (label lang))
-   | case   (n: name) (t: lang)      (branches: list (branch lang))
-   | ctor   (n: name)                (args:     list lang)
-\end{lstlisting}
-\end{definition}
-
-\subsection{Гомотопічна система типів $O_{HTS}$}
-
-\begin{definition} (Мовна категорія $O_{HTS}$).
-$$
-O_{HTS} =
-\begin{cases}
-Ob: \{\ maybe\ HTS\ \} \\
-Hom: \begin{cases}
-type,norm: Ob \rightarrow Ob \\
-certify: Ob \rightarrow Ob = type \circ norm \\
-\end{cases}
-\end{cases}
-$$
-\end{definition}
-
-\begin{definition} (Синтаксис мовної категорії $O_{HTS}$).
-Синтаксис гомотопічної мовної категорії містить усі
-попередні мовні синтаксиси: $O_I$, $O_W$, $O_=$, $O_\Sigma$, $O_\Pi$:
-\begin{lstlisting}
-data HTS = hpure (_: pts HTS)
-         | hsigma (_: exists HTS)
-         | hid (_: identity HTS)
-         | hind (_: ind HTS)
-         | homotopy (_: hts HTS)
-\end{lstlisting}
-\end{definition}
-
-Гомотопічна типа наслідує $O_{ITS}$ але модифіковану з
-Path-типом в індуктивних визначеннях, структурою композиції,
-анонсує Path-тип (формація, конструктор, та елімінатор)
-як лямбда функцію на відрізку, а також склейку типів у всесвіті
-та склейку змінних з відповідними елімінаторами.
-
-\begin{definition} (Синтаксичне дерево $O_I$).
-\begin{lstlisting}
-data hts (lang: U)
-   = path (t a b: lang)
-   | plam (n: name) (a: alg) (b: lang)
-   | papp (f: name) (a: lang) (p: alg)
-   | comp_ (a b: lang)
-   | fill_ (a b c: lang)
-   | glue_ (a b c: lang)
-   | glue_elem (a b: lang)
-   | unglue_elem (a b: lang)
-\end{lstlisting}
-\end{definition}
-
-Таким чином,
-$O_{HTS}$ містить два Id-типа, один унаслідований від $O_=$,
-а інший який міститься в синтаксичному дереві $O_I$.
 
 \section{Чиста система типів PTS$^\infty$}
 
@@ -282,30 +64,6 @@ Erlang, PyPy, LuaJIT, K.
 для нижчих систем лямюда-кубу, таких як System F або System F$_\omega$.
 У цій роботі представлений екстракт в мову Erlang у якості цільового інтерпретатору.
 
-\begin{table}[h]
-\begin{center}
-\caption{Перелік моі, інтерпретаторів та платформ для цільової компіляції}
-\tabcolsep7pt\begin{tabular}{lcccc}
-\hline
-\textbf{Ціль} & \textbf{Джерело} & \textbf{Система типів} & \textbf{Застосування}\\
-\hline
-O          & CPS        & $\pi$+$\lambda$+$\mu$ calculi & середовище виконання \\
-BEAM       & PTS        & CoC$^\infty$        & фундаментальна мова \\
-BEAM       & HTS        & HoTT                & гомотопічна система \\
-BEAM       & PureScript & System F            & системна бібліотека \\
-\hline
-JavaScript & PureScript & System F & дитячі розваги \\
-JVM        & Java       & F-sub\footnote{System F wit bounded quantification} & реліктова історія \\
-JVM        & Scala      & System F$_\omega$   & маргінальна промисловість \\
-CLR        & F\#        & System F$_\omega$   & маргінальна промисловість \\
-GHC        & Haskell    & System D            & мрія про залежні типи \\
-GHC        & Morte      & CoC                 & фундаментальна мова Кокана \\
-JavaScript & Kind       & Self-Types + IntNet & сучасна фундаментальна мова \\
-GHC,OCaml  & Coq        & CiC                 & промисловий прувер \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
 
 \textbf{PTS синтаксиси}. Мінімальне ядро з однією аксіомою
 сприймає декілька лямбда ситаксисів.
@@ -352,6 +110,35 @@ $\lambda$-функції, її елімінатора аплікації, $\beta
 та компілювати (верифікувати та екстрагувати) на цільових платформах за допомогою
 тієї ж мови Ом, можливо імплементовоної на іншій мові програмування та вбудованої
 в основну систему.
+
+\begin{table}[h]
+\begin{center}
+\caption{Перелік мов, інтерпретаторів та платформ для цільової компіляції}
+\tabcolsep7pt\begin{tabular}{lcccc}
+\hline
+\textbf{Ціль} & \textbf{Джерело} & \textbf{Система типів} & \textbf{Застосування}\\
+\hline
+\rowcolor{LightGray}
+CPS        & ITS-F      & $\pi$+$\lambda$+$\mu$ calculi & середовище виконання \\
+\rowcolor{LightGray}
+BEAM       & Hamler     & System F            & системна бібліотека N2O.TECH \\
+\rowcolor{LightGray}
+BEAM       & PTS        & CoC$^\infty$        & фундаментальна мова \\
+\rowcolor{LightGray}
+BEAM       & HTS        & HoTT                & гомотопічна система \\
+\hline
+JavaScript & PureScript & System F & дитячі розваги \\
+JVM        & Java       & F-sub\footnote{System F wit bounded quantification} & реліктова історія \\
+JVM        & Scala      & System F$_\omega$   & маргінальна промисловість \\
+CLR        & F\#        & System F$_\omega$   & маргінальна промисловість \\
+GHC        & Haskell    & System F$_\omega$   & avoid success at all costs \\
+GHC        & Morte      & CoC                 & фундаментальна мова Кокана \\
+JavaScript & Kind       & Self-Types + IntNet & сучасна фундаментальна мова \\
+GHC,OCaml  & Coq        & CiC                 & промисловий прувер \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 \subsection{Синтаксис}
 
