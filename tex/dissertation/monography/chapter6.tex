@@ -748,10 +748,10 @@ def MLTT (A: U) : U ≔ Σ
 \begin{theorem} (Model Check).
 There is an instance of MLTT.
 \begin{lstlisting}
-instance (A: U): MLTT A
-    = (Pi A, lam A, app A, Beta A, Eta A,
-       Sigma A, dpair A, pr1 A, pr2 A, Beta1 A, Beta2 A, Eta2 A,
-       Path A, refl A, J A, J_comp A, A)
+def instance (A : U) : MLTT A ≔
+    (Pi A, lambda A, app A, comp₁ A, comp₂ A,
+     Sigma A, pair A, pr₁ A, pr₂ A, comp₃ A, comp₄ A, comp₅ A,
+     Equ A, refl A, J A, comp₆ A, A)
 \end{lstlisting}
 \end{theorem}
 
