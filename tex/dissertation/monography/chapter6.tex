@@ -6,7 +6,6 @@
 гомотопічна базова бібліотека представлена у цьому та наступному розділах.
 
 \section*{Вступне слово}
-
 Опис гомотопічної мови дається у розрізі індуктивних типів, та показується,
 що вищі індуктивні типи з вищою рівністю є аналогом CW-комплексів, та розширюють
 гомотопічну теорію типів (без UIP) так само, як індуктивні типи є аналогом
@@ -16,7 +15,6 @@
 які є матаметичними ізморізмами).
 
 \section{Інтерналізація теорії типів}
-
 Each language implementation needs to be checked. The one of possible test cases
 for type checkers is the direct embedding of type theory model into the language of type checker.
 As types in Martin-Löf Type Theory (MLTT) are formulated using 5 types of rules (formation,
@@ -32,7 +30,6 @@ to MLTT modeling and its verification. Also as many may not be familiar with
 $\Pi$ and $\Sigma$ types, this issue presents different interpretation of MLTT types.
 
 \subsubsection{Теорія типів}
-
 MLTT could be reduced to $\Pi$, $\Sigma$, Path types, as W-types could be
 modeled through $\Sigma$ and Fin/Nat/List/Maybe types could be modeled on W.
 In this issue $\Pi$, $\Sigma$, Path are given as a core MLTT and W-types
@@ -84,7 +81,6 @@ Path types are essential to prove computation and uniquness rules for all types
 the MLTT rules as a whole.
 
 \subsubsection{Інтерпретації}
-
 In contexts you can bind to variables (through de Brujin indexes or string names):
 i) indexed universes; ii) built-in types; iii) user constructed types, and ask
 questions about type derivability, type checking and code extraction. This system
@@ -97,7 +93,6 @@ following interpretations: i) type-theoretical; ii) categorical;
 iii) set-theoretical; iv) homotopical; v) fibrational or geometrical.
 
 \subsubsection*{Логічна або теоретико-типова інтерпретація}
-
 According to type theoretical interpretation for any type should be provided 5 formal
 inference rules: i) formation; ii) introduction; iii) dependent elimination principle;
 iv) beta rule or computational rule; v) eta rule or uniqueness rule. The last one could
@@ -109,9 +104,7 @@ intuitionistic propositional logic (IPL) which is directly embedded into MLTT.
 Logical and type-theoretical interpretations could be distincted. Also
 set-theoretical interpretation is not presented in Table 1.
 
-
 \subsubsection*{Категоріальна або топосо-теоритична інтерпретація}
-
 Categorical interpretation is a modeling through categories and functors.
 First category is defined as objects, morphisms and their properties, then
 we define functors, etc. In particular, as an example, according to categorical
@@ -127,9 +120,7 @@ Set-theoretical interpretations could replace first-order logic, but could not a
 higher equalities, as long as inductive types to be embedded directly. Set is modelled
 in type theory according to homotopical interpretation as n-type.
 
-\newpage
 \subsubsection*{Гомотопічна інтерпретація}
-
 In classical MLTT uniquness rule of Id type do holds strictly. In Homotopical
 interpretation of MLTT we need to allow a path space as Path type where uniqueness
 rule doesn't hold. Groupoid interpretation of Path equality that doesn't hold UIP generally
@@ -141,11 +132,9 @@ of fiber bundles and trivial fiber bindle as direct isomorphisms of $\Pi$ types 
 given here as theorem. As fibrations study in homotopical interpretation, geometric
 interpretation could be treated as homotopical.
 
-
 \subsection{Типи $\Pi$, $\Sigma$, Path}
 
 \subsubsection{$\Pi$-тип}
-
 $\Pi$ is a dependent product type, the generalization of functions.
 As a function it can serve the wide range of mathematical constructions
 as its domain and codomain, which are in general: objects, types, or spaces;
@@ -160,7 +149,6 @@ that forms a ground of type theory; ii) geomeric intepretation of $\Pi$ as fiber
 iii) categorical interpretation of functions as functors.
 
 \subsubsection*{Теоретико-типова інтерпретація}
-
 As a logical system dependent type theory could correspond to higher order logic.
 However here only type-theoretical model is given completely.
 
@@ -204,7 +192,6 @@ Eta (A:U) (B:A->U) (a:A) (f: Pi A B)
 \end{theorem}
 
 \subsubsection*{Категоріальна інтерпретація}
-
 The adjoints $\Pi$ and $\Sigma$ is not the only adjoints could be presented in type system.
 Axiomatic cohesions could contain a set of adjoint pairs as a core type checker operations.
 
@@ -241,7 +228,6 @@ such that $f \circ g: B \mapright{g} A \mapright{f} B$ equals the identity morph
 \end{definition}
 
 \subsubsection*{Гомотопічна інтерпретація}
-
 Geometrically, $\Pi$ type is a space of sections, while the dependent codomain is a space of fibrations.
 Lambda functions are sections or points in these spaces, while the function result is a fibration.
 $\Pi$ type also represents the cartesian family of sets, generalizing the cartesian product of sets.
@@ -317,7 +303,6 @@ until \textbf{Issue III: Homotopy Type Theory} because
 bi-invertible iso type will be announced there.
 
 \subsubsection{$\Sigma$-тип}
-
 $\Sigma$ is a dependent sum type, the generalization of products.
 $\Sigma$ type is a total space of fibration. Element of total
 space is formed as a pair of basepoint and fibration.
@@ -728,36 +713,37 @@ It combines 4 Path rules (no eta), 5 $\Pi$ rules, and 6 $\Sigma$ rules (two elim
 The proof is provided by direct embedding (internalizing) the model intro the model
 of type checker which is even more powerful.
 
-\begin{definition} (MLTT).
+\begin{definition} (MLTT $≔$).
 The MLTT as a Type is defined by taking all rules
 for $\Pi$, $\Sigma$ and Path types into one $\Sigma$ telescope or context.
-\begin{lstlisting}
-MLTT (A: U): U
-  = (Pi_Former: (A -> U) -> U)
-  * (Pi_Intro: (B: A -> U) -> ((a: A) -> B a) -> (Pi A B))
-  * (Pi_Elim: (B: A -> U) (a: A) -> (Pi A B) -> B a)
-  * (Pi_Comp1: (B: A -> U) (a : A) (f: Pi A B) ->
-    Equ (B a) (Pi_Elim B a (Pi_Intro B f)) (f a))
-  * (Pi_Comp2: (B: A -> U) (a: A) (f: Pi A B) ->
-    Equ (Pi A B) f (\(x:A) -> f x))
-  * (Sigma_Former: (A -> U) -> U)
-  * (Sigma_Intro: (B: A -> U) (a: A) -> (b: B a) -> Sigma A B)
-  * (Sigma_Elim1: (B: A -> U) (_: Sigma A B) -> A)
-  * (Sigma_Elim2: (B: A -> U) (x: Sigma A B) -> B (pr1 A B x))
-  * (Sigma_Comp1: (B: A -> U) (a: A) (b: B a) ->
-    Path A a (Sigma_Elim1 B (Sigma_Intro B a b)))
-  * (Sigma_Comp2:  (B: A -> U) (a: A) (b: B a) ->
-    Path (B a) b (Sigma_Elim2 B (a,b)))
-  * (Sigma_Comp3: (B: A -> U) (p: Sigma A B)  ->
-    Path (Sigma A B) p (pr1 A B p,pr2 A B p))
-  * (Id_Former: A -> A -> U)
-  * (Id_Intro: (a: A) -> Path A a a)
-  * (Id_Elim: (x: A) (C: D A) (d: C x x (Id_Intro x))
-    (y: A) (p: Path A x y) -> C x y p)
-  * (Id_Comp: (a:A)(C: D A) (d: C a a (Id_Intro a)) ->
-    Path (C a a (Id_Intro a)) d (Id_Elim a C d a (Id_Intro a))) * U
-\end{lstlisting}
 \end{definition}
+
+\begin{lstlisting}
+def MLTT (A: U) : U ≔ Σ
+    (Π-form  : Π (B: A → U), U)
+    (Π-ctor₁ : Π (B: A → U), Pi A B → Pi A B)
+    (Π-elim₁ : Π (B: A → U), Pi A B → Pi A B)
+    (Π-comp₁ : Π (B: A → U) (a: A) (f: Pi A B),
+               Equ (B a) (Π-elim₁ B (Π-ctor₁ B f) a) (f a))
+    (Π-comp₂ : Π (B: A → U) (a:  A) (f: Pi A B),
+               Equ (Pi A B) f (λ (x : A), f x))
+    (Σ-form  : Π (B: A → U), U)
+    (Σ-ctor₁ : Π (B: A → U) (a : A) (b : B a), Sigma A B)
+    (Σ-elim₁ : Π (B: A → U) (p : Sigma A B), A)
+    (Σ-elim₂ : Π (B: A → U) (p : Sigma A B), B (pr₁ A B p))
+    (Σ-comp₁ : Π (B: A → U) (a : A) (b: B a),
+               Equ A a (Σ-elim₁ B (Σ-ctor₁ B a b)))
+    (Σ-comp₂ : Π (B: A → U) (a : A) (b: B a),
+               Equ (B a) b (Σ-elim₂ B (a, b)))
+    (Σ-comp₃ : Π (B: A → U) (p : Sigma A B),
+               Equ (Sigma A B) p (pr₁ A B p, pr₂ A B p))
+    (=-form  : Π (a: A), A → U)
+    (=-ctor₁ : Π (a: A), Equ A a a)
+    (=-elim₁ : Π (a: A) (C: D A) (d: C a a (=-ctor₁ a))
+                 (y: A) (p: Equ A a y), C a y p)
+    (=-comp₁ : Π (a: A) (C: D A) (d: C a a (=-ctor₁ a)),
+               Equ (C a a (=-ctor₁ a)) d (=-elim₁ a C d a (=-ctor₁ a))), U
+\end{lstlisting}
 
 \begin{theorem} (Model Check).
 There is an instance of MLTT.

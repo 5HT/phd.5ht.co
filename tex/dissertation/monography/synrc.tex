@@ -1,13 +1,13 @@
 \usepackage[osf]{mathpazo}
 \usepackage{musicography}
 \usepackage{stmaryrd}
-\usepackage{color, colortbl}
+\usepackage{color,colortbl}
 \usepackage{epigraph}
 \usepackage[mathcal,mathbf]{euler}
-\usepackage{amsmath,amssymb,amsthm}
+\usepackage{amsmath,amssymb,amsthm,wasysym}
 \usepackage{graphicx,sidecap,tikz}
 \usepackage{fullwidth}
-\usepackage{fontspec}
+\usepackage[T1]{fontspec}
 \usepackage{hyphenat}
 \usepackage{ifthen}
 \usepackage{tikz-cd}
@@ -16,12 +16,20 @@
 \usepackage{graphicx}
 \usepackage{cite}
 \usepackage{hyperref}
-\usepackage{listingsutf8}
 \usepackage{moreverb}
 \usepackage{listings}
 \usepackage{caption}
-\usepackage{amssymb}
-\usepackage{mathtools}
+\usepackage{newunicodechar}
+
+\definecolor{keywordcolor}{rgb}{0.0, 0.1, 0.6}
+\definecolor{commentcolor}{rgb}{0.4, 0.4, 0.4}   % grey
+\definecolor{symbolcolor}{rgb}{0.0, 0.1, 0.6}    % blue
+\definecolor{sortcolor}{rgb}{0.1, 0.5, 0.1}      % green
+
+\newunicodechar{≔}{≔}
+\newunicodechar{₁}{₁}
+\newunicodechar{₂}{₂}
+\newunicodechar{₃}{₃}
 
 \usetikzlibrary{matrix}
 \usetikzlibrary{babel}
@@ -177,24 +185,5 @@
 \addto\captionsrussian{\renewcommand{\chaptername}{Розділ}}
 \addto\captionsrussian{\renewcommand{\tablename}{Таблиця}}
 
-\lstset{morekeywords={record,data,inductive,extend,enum,
-Type,Path,unit,Unit,Nat,List,let,in,eq,type,sh,sub,star,
-var,dep,norm,fun,app,lambda,arrow,pi,case,receive,spawn,
-send,name,list,nat,tele,case,id,sigma,pair,fst,snd,id,idPair,idJ,
-branch,label,ctor,sum,prod,ty,lam,split,Glue,glue,unglue,Pi,
-Sigma,pr1,pr2,Beta,Eta,Beta1,Beta2,Eta2,refl,ap,apply,apd,J,
-process,execute,storage,axiom,undefined,comp,PathP,fill,
-precategory,catfunctor,equiv,trans,base,loop,S1,S2,pub,
-struct,Vec,Arc,Cell,sub,rcv,snd,spawn,module,import,
-coerce,cong,Fixpoint,Parameter,Definition,CoInductive,
-Require,Import,CoFixpoint,remote,ac,total,fix,ext,fn,
-call,true,false,is_defined,datum,id_intro,id_elim,
-where,bool,maybe,either,unit,empty,list,stream,vector,fin}}
-
-\lstset{
-    backgroundcolor=\color{white},
-    keywordstyle=\color{blue},
-    inputencoding=utf8,
-    basicstyle=\bf\ttfamily\footnotesize,
-    xleftmargin=0cm,
-    columns=fixed}
+\def\lstlanguagefiles{syntax.tex}
+\lstset{language=infinity}
