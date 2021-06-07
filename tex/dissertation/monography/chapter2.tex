@@ -263,9 +263,9 @@ $O_\lambda$, $O_\pi$, $O_\mu$.
 
 \begin{definition} (Синтаксис мовної категорії $O_{CPS}$).
 \begin{lstlisting}
-data CPS = church (_: lambda CPS)
-         | milner (_: pi     CPS)
-         | tensor (_: mu     CPS)
+data CPS = lambda (_: church CPS)
+         | process (_: milner CPS)
+         | tensor (_: futhark CPS)
 \end{lstlisting}
 \end{definition}
 
@@ -291,6 +291,21 @@ data milner (lang: U)
    | rcv (cursor: lang)
    | pub (size: nat)
    | sub (cursor: lang)
+\end{lstlisting}
+\end{definition}
+
+\begin{definition} (Синтаксичне дерево $O_\mu$).
+\begin{lstlisting}
+data futhark (lang: U)
+   = iota (cursor: lang)
+   | map (cursor: lang)
+   | fold (size: nat)
+   | scan (cursor: lang)
+   | for (cursor: lang)
+   | while (cursor: lang)
+   | concat (cursor: lang)
+   | zip (cursor: lang)
+   | transpose (cursor: lang)
 \end{lstlisting}
 \end{definition}
 
