@@ -644,21 +644,27 @@ $$
 \begin{equation}
 \tag{$W$-elimination}
 \dfrac
-{\splitdfrac{w: W \vdash C(w) : Type,\ x:A,\ u:B(x) \rightarrow W}{v:\Pi (y:B(x)) \rightarrow C(u(y)) \vdash c(x,u,v):C(sup(x,u))}}
+{\splitfrac{w: W \vdash C(w) : Type,\\ x:A,\ u:B(x) \rightarrow W}{v:\Pi (y:B(x)) \rightarrow C(u(y)) \vdash c(x,u,v):C(sup(x,u))}}
 {w:W \vdash wrec(w,c):C(w)}
 \end{equation}
 
 \begin{equation}
 \tag{$W$-computation}
 \dfrac
-{\splitdfrac{w: W \vdash C(w) : Type,\ x:A,\ u:B(x) \rightarrow W}{v:\Pi (y:B(x)) \rightarrow C(u(y)) \vdash c(x,u,v):C(sup(x,u))}}
-{\splitdfrac{x:A,\ u:B(x) \rightarrow W \vdash wrec(sup(x,u),c)\ =}{c(x,u,\lambda (y:B(x)) \rightarrow wrec(u(y),c)):C(sup(x,u))}}
+{\splitfrac{w: W \vdash C(w) : Type,\ x:A,\ u:B(x) \rightarrow W}{v:\Pi (y:B(x)) \rightarrow C(u(y)) \vdash c(x,u,v):C(sup(x,u))}}
+{\splitfrac{x:A,\ u:B(x) \rightarrow W \vdash wrec(sup(x,u),c)\ =}{c(x,u,\lambda (y:B(x)) \rightarrow wrec(u(y),c)):C(sup(x,u))}}
 \end{equation}
 
 \newpage
 \section{Гомотопічна система типів HTS}
+Гомотопічна система типів, принаймі без вищих індуктивних типів, які є функтором на інших мовних категорій,
+формально моделюється досніповою (предпучковою) семантикою на категорії де Моргана $I: \square_n^{op} \rightarrow Set$.
+Так як тут теж є своя аплікація та лямбда, то можна сказати, що це ще
+одна лямбда система, але для безпосередньох маніпуляції багатовимірними кубами,
+використовуючи при цьому логіку де Моргана.
 
 \subsection{Синтаксис}
+Тут подано повний синтаксис разом з вищими індуктивними типами.
 
 \begin{lstlisting}[mathescape=true]
    sys := [ sides ]          side := (id=0)$\rightarrow$exp+(id=1)$\rightarrow$exp
@@ -697,21 +703,22 @@ $\mathbf{.1}$, $\mathbf{.2}$,
 синтаксисів та кодувань попереднього рівня.
 
 \begin{lstlisting}[mathescape=true]
-data alg
-   = zero
-   | one
-   | max (a b: alg)
-   | min (a b: alg)
-
-data hts
-   = path (t a b: lang)
-   | plam (n: name) (a: alg) (b: lang)
-   | papp (f: name) (a: lang) (p: alg)
-   | comp_ (a b: lang)
-   | fill_ (a b c: lang)
-   | glue_ (a b c: lang)
-   | glue_elem (a b: lang)
-   | unglue_elem (a b: lang)
+data hts (lang: U)
+   = pre (n: nat)
+   | path (A x y: lang)
+   | plam (name: name) (a: lang)
+   | papp (f a: lang)
+   | I
+   | 0
+   | 1
+   | \\/ (a b: lang)
+   | /\\ (a b: lang)
+   | neg (e: lang)
+   | comp (a b: lang)
+   | fill (a b c: lang)
+   | glue (a b c: lang)
+   | glue-1 (a b: lang)
+   | unglue-1 (a b: lang)
 \end{lstlisting}
 
 \section{Висновки}
