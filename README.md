@@ -5,10 +5,10 @@ FORMAL SYSTEM ONE
 
 Where `FORMAL` stands for system of formal languages up homotopy type systems for doing formal research, `SYSTEM` stands for runtime environment [which consists of CPS interpreter with AVX/GPU vectorization and SMP process calculus with intercore protocol] for mathematical/physical simulations and general purpose programming, and `ONE` stands for philosophy research.
 
-Monography.PDF
---------------
+Monography
+----------
 
-https://phd.5ht.co/monography.pdf
+Compilation from master: https://phd.5ht.co/monography.pdf
 
 ```
 $ cp *.ttf ./local/share/fonts
